@@ -31,6 +31,10 @@ struct LoginView<T>: View where T: LoginViewModelObject {
                 
                 Spacer().frame(height:20)
                 
+                signInStatusText
+                
+                Spacer().frame(height:20)
+
                 Group {
                     Group {
                         VStack {
@@ -48,25 +52,29 @@ struct LoginView<T>: View where T: LoginViewModelObject {
                     
                     Spacer().frame(height:20)
                     
-                    VStack {
+                    Group {
+                        VStack {
+                            HStack {
+                                passwordHintText
+                                Spacer()
+                            }
+                            if !viewModel.binding.isEntryPasswordShowFlag {
+                                passwordHideTextField
+                            } else {
+                                passwordOpenTextField
+                            }
+                        }.padding(.horizontal, 10)
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(.white)
+                            .cornerRadius(24)
                         HStack {
-                            passwordHintText
                             Spacer()
-                        }
-                        if !viewModel.binding.isEntryPasswordShowFlag {
-                            passwordHideTextField
-                        } else {
-                            passwordOpenTextField
-                        }
-                    }.padding(.horizontal, 10)
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(.white)
-                        .cornerRadius(24)
-                    HStack {
-                        Spacer()
-                        passwordShowActionText
-                    }.padding(.horizontal, 10)
+                            passwordShowActionText
+                        }.padding(.horizontal, 10)
+                    }.onChange(of: viewModel.binding.isEntryPasswordTextField) { _ in
+                        viewModel.input.toPasswordTextFieldEntered.send(viewModel.binding.isEntryPasswordTextField)
+                    }
                     
                     Spacer().frame(height:20)
                     
@@ -74,7 +82,7 @@ struct LoginView<T>: View where T: LoginViewModelObject {
                     
                     Spacer().frame(height:20)
                     
-                    newUserText
+                    serviceInfoText
                 }.padding(.horizontal, 20)
                 
                 Spacer()
@@ -82,29 +90,21 @@ struct LoginView<T>: View where T: LoginViewModelObject {
                 Group {
                     accountLoginText
                     
-                    Spacer().frame(height:20)
+                    Spacer().frame(height:26)
                     
                     signInWithGoogleButton
                     
-                    Spacer().frame(height:20)
+                    Spacer().frame(height:26)
                     
                     signInWithAppleButton
                     
                     Spacer().frame(height:100)
                 }
-            }.onChange(of: viewModel.binding.isSignedInWithFirebaseAuth) { value in
-                if value {
-                    presentationMode.wrappedValue.dismiss()
-                }
+            }.onChange(of: viewModel.binding.isSignInStatus) { _ in
+                presentationMode.wrappedValue.dismiss()
             }
-            .alert(isPresented: $viewModel.binding.isSignedInWithFirebaseAuth) {
-                Alert(title: Text("メールボックスをチェックしてください"))
-            }
-            .onChange(of: viewModel.binding.isEntryEmailTextField) { _ in
-                
-            }
-            .onChange(of: viewModel.binding.isEntryPasswordTextField) { _ in
-
+            .fullScreenCover(isPresented: $viewModel.binding.isServiceInfoSheetFlag) {
+                TermsOfServiceView()
             }
         }
     }
@@ -114,10 +114,16 @@ extension LoginView {
     var TitllText: some View {
         Text("Oboegaki")
             .font(.system(size: 50, weight: .black, design: .default))
-            .foregroundColor(Color.white)
+            .foregroundColor(.white)
             .italic()
     }
     
+    var signInStatusText: some View {
+        Text("\(viewModel.binding.isSignInStatusMessege)")
+            .font(.system(size: 16, weight: .light, design: .default))
+            .foregroundColor(viewModel.binding.isSignInStatusMessegeColorFlag ? .white : .red)
+    }
+
     var emailHintText: some View {
         Text("メールアドレス")
             .font(.system(size: 14, weight: .medium, design: .default))
@@ -132,7 +138,7 @@ extension LoginView {
     
     var emailTextField: some View {
         VStack {
-            TextField("メールアドレスを入力してください。", text: $viewModel.binding.isEntryEmailTextField)
+            TextField("メールアドレス", text: $viewModel.binding.isEntryEmailTextField)
                 .preferredColorScheme(.light)
                 .autocapitalization(.none)
         }
@@ -140,7 +146,7 @@ extension LoginView {
     
     var passwordHideTextField: some View {
         VStack {
-            SecureField("8〜16文字のパスワードを入力してください。", text: $viewModel.binding.isEntryPasswordTextField)
+            SecureField("8〜16文字のパスワード", text: $viewModel.binding.isEntryPasswordTextField)
                 .preferredColorScheme(.light)
                 .autocapitalization(.none)
         }
@@ -148,9 +154,10 @@ extension LoginView {
     
     var passwordOpenTextField: some View {
         VStack {
-            TextField("　8〜16文字のパスワードを入力してください。", text: $viewModel.binding.isEntryPasswordTextField)
+            TextField("8〜16文字のパスワードを入力してください。", text: $viewModel.binding.isEntryPasswordTextField)
                 .preferredColorScheme(.light)
                 .autocapitalization(.none)
+                .font(.system(size: 15.7, weight: .medium, design: .default))
         }
     }
     
@@ -168,7 +175,7 @@ extension LoginView {
             action: {
                 viewModel.input.toLoginButtonTapped.send()
             }, label: {
-                Text("ログイン")
+                Text("開始する")
                     .frame(width: 200, height: 40, alignment: .center)
                     .background(Color("ClearWhite"))
                     .foregroundColor(.white)
@@ -178,22 +185,42 @@ extension LoginView {
         .frame(width: 200, height: 40, alignment: .center)
     }
     
-    var newUserText: some View {
-        Text("初めての方はこちら")
-            .foregroundColor(.white)
-            .underline()
+    var serviceInfoText: some View {
+        Button(
+            action: {
+                viewModel.input.toServiceInfoButtonTapped.send()
+            }, label: {
+                Text("利用規約")
+                    .foregroundColor(.white)
+                    .underline()
+            }
+        )
     }
     
     var accountLoginText: some View {
-        Text("- サービスでログイン -")
-            .font(.system(size: 16, weight: .light, design: .default))
-            .foregroundColor(.black)
+        HStack {
+            Rectangle()
+                .frame(height: 1)
+                .foregroundColor(Color("MediumGray"))
+                .cornerRadius(24)
+            Spacer()
+            Text("サービスで開始する")
+                .font(.system(size: 16, weight: .light, design: .default))
+                .foregroundColor(Color("MediumGray"))
+                .lineLimit(1)
+                .frame(width: 140)
+            Spacer()
+            Rectangle()
+                .frame(height: 1)
+                .foregroundColor(Color("MediumGray"))
+                .cornerRadius(24)
+        }.padding(.horizontal, 20)
     }
     
     var signInWithGoogleButton: some View {
         HStack {
             Spacer()
-            SignInWithGoogleButton(signInFlag: $viewModel.binding.isSignedInWithFirebaseAuth)
+            SignInWithGoogleButton(signInFlag: $viewModel.binding.isSignInStatus)
                 .frame(width: 206, height: 50, alignment: .center)
             Spacer()
         }
@@ -202,7 +229,7 @@ extension LoginView {
     var signInWithAppleButton: some View {
         HStack {
             Spacer()
-            SignInWithAppleButton(signInFlag: $viewModel.binding.isSignedInWithFirebaseAuth)
+            SignInWithAppleButton(signInFlag: $viewModel.binding.isSignInStatus)
                 .frame(width: 200, height: 40, alignment: .center)
             Spacer()
         }
@@ -217,21 +244,26 @@ struct LoginView_Previews: PreviewProvider {
 extension LoginView_Previews {
     final class MockViewModel: LoginViewModelObject {
         final class Input: LoginViewModelInputObject {
-            var toLoginButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+            var toPasswordTextFieldEntered: PassthroughSubject<String, Never> = PassthroughSubject<String, Never>()
             
             var toPasswordShowTextTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
-            
-            var toLoadingStarted: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+            var toLoginButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+            var toServiceInfoButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+
             var toSignInWithAppleButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
             var toSignInWithGoogleButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         }
         
         final class Binding: LoginViewModelBindingObject {
+            @Published var isServiceInfoSheetFlag: Bool = false
+
             @Published var isEntryEmailTextField: String = ""
             @Published var isEntryPasswordTextField: String = ""
             @Published var isEntryPasswordShowFlag: Bool = false
             
-            @Published var isSignedInWithFirebaseAuth: Bool = false
+            @Published var isSignInStatus: Bool = false
+            @Published var isSignInStatusMessege: String = ""
+            @Published var isSignInStatusMessegeColorFlag: Bool = false
         }
         
         final class Output: LoginViewModelOutputObject {
