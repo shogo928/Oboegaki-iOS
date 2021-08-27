@@ -19,8 +19,10 @@ struct StartupView<T>: View where T: StartupViewModelObject {
         ZStack {
             Color(.white).edgesIgnoringSafeArea(.all)
             
-            animationView.fullScreenCover(isPresented: $viewModel.binding.isLoading) {
-                if !viewModel.binding.hasError {
+            animationView.fullScreenCover(isPresented: $viewModel.binding.isLoading, onDismiss: {
+                                            viewModel.input.toLoadingStarted.send()
+                                          }) {
+                if viewModel.binding.isFirebaseAuth {
                     NavigationView {
                         HomeView(viewModel: HomeViewModel())
                     }
