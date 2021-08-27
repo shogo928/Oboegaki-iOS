@@ -25,10 +25,7 @@ protocol StartupViewModelInputObject: InputObject {
 protocol StartupViewModelBindingObject: BindingObject {
     var isAnimating: Bool { get set }
     var isLoading: Bool { get set }
-    var hasError: Bool { get set }
-    
     var isFirebaseAuth: Bool { get set }
-    var isUserName: Bool { get set }
 }
 
 // MARK: - StartupViewModelOutputObject
@@ -44,10 +41,7 @@ class StartupViewModel: StartupViewModelObject {
     final class Binding: StartupViewModelBindingObject {
         @Published var isAnimating: Bool = false
         @Published var isLoading: Bool = false
-        @Published var hasError: Bool = false
-        
         @Published var isFirebaseAuth: Bool = false
-        @Published var isUserName: Bool = false
     }
     
     final class Output: StartupViewModelOutputObject {}
@@ -68,23 +62,17 @@ class StartupViewModel: StartupViewModelObject {
         binding = Binding()
         output = Output()
         self.ref = Database.database().reference()
-        
-        checkLogin()
-        checkName()
-        
+                
         input.toAnimationStarted
             .sink(receiveValue: { [weak self] in self?.binding.isAnimating.toggle()})
             .store(in: &cancellables)
         
         input.toLoadingStarted
             .sink(receiveValue: { [weak self] in
+                self?.checkLogin()
+                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     self?.binding.isLoading.toggle()
-                    if self?.binding.isFirebaseAuth == false {
-                        if self?.binding.isUserName == false {
-                            self?.binding.hasError.toggle()
-                        }
-                    }
                 }
             })
             .store(in: &cancellables)
@@ -96,17 +84,5 @@ class StartupViewModel: StartupViewModelObject {
         } else {
             self.binding.isFirebaseAuth = false
         }
-    }
-    
-    private func checkName() {
-        guard let user = Auth.auth().currentUser else { return }
-            
-        ref.child("user_info/user").observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
-            if snapshot.hasChild("\(user.uid)") {
-                self?.binding.isUserName = true
-            } else {
-                self?.binding.isUserName = false
-            }
-        })
     }
 }
