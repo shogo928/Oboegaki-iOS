@@ -20,17 +20,30 @@ struct HomeView<T>: View where T: HomeViewModelObject {
             Color("backgroundGray").edgesIgnoringSafeArea(.all)
             
             VStack {
-                yearView
-                dayView
-                todoView
+                VStack {
+                    yearView
+                }.background(Color(.white))
+                .cornerRadius(16)
+                .padding(.horizontal, 20)
+                
+                Spacer()
+
+                VStack {
+                    dayView
+                }.background(Color(.white))
+                .cornerRadius(16)
+                .padding(.horizontal, 20)
+                
                 Spacer()
                 
-            }.background(Color(.white))
-            .cornerRadius(16)
-            .padding(.horizontal, 20)
-            
-            Spacer()
-            
+                VStack {
+                    todoView
+                }.background(Color(.white))
+                .cornerRadius(16)
+                .padding(.horizontal, 20)
+                
+                Spacer()
+            }
         }
     }
 }
@@ -59,7 +72,7 @@ extension HomeView {
                 Text("＞")
                     .foregroundColor(Color("Primary"))
             }).padding(.trailing, 10)
-        }.padding(.top, 10)
+        }
     }
     
     var dayView: some View {
@@ -67,12 +80,29 @@ extension HomeView {
     }
     
     var todoView: some View {
-        List {
-            ForEach(0..<viewModel.binding.isTodoCount) { index in
-                Text("").listRowBackground((index  % 2 == 0) ? Color(.systemBlue) : Color(.white))
+        VStack {
+            if viewModel.binding.isTodoCount != 0 {
+                List {
+                    ForEach(0..<viewModel.binding.isTodoCount) { index in
+                        Text("").listRowBackground((index  % 2 == 0) ? Color(.systemBlue) : Color(.white))
 
+                    }
+                    Spacer(minLength: 40)
+                }
+            } else {
+                GeometryReader { geometry in
+                    Button(action: {
+                        viewModel.input.toEntryTodoViewButtonTapped.send()
+                    }, label: {
+                        Text("＋")
+                            .font(.system(size: 50, weight: .black, design: .default))
+                            .frame(width: geometry.size.width / 3, height: geometry.size.width / 3)
+                            .foregroundColor(Color(.white))
+                            .background(Color("Primary"))
+                            .cornerRadius(geometry.size.width / 3)
+                    }).frame(width: geometry.size.width, height: geometry.size.width)
+                }
             }
-            Spacer(minLength: 40)
         }
     }
     
