@@ -26,6 +26,7 @@
 		7A25FFF926D3E5FC009837AA /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A25FFF826D3E5FC009837AA /* LoginViewModel.swift */; };
 		7A25FFFD26D3E60F009837AA /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A25FFFC26D3E60F009837AA /* HomeViewModel.swift */; };
 		7A25FFFF26D3E622009837AA /* SingInWithAppleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A25FFFE26D3E622009837AA /* SingInWithAppleButton.swift */; };
+		7A41E86626E04B470060DD78 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A41E86526E04B470060DD78 /* CalendarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 		7A25FFF826D3E5FC009837AA /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7A25FFFC26D3E60F009837AA /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		7A25FFFE26D3E622009837AA /* SingInWithAppleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingInWithAppleButton.swift; sourceTree = "<group>"; };
+		7A41E86526E04B470060DD78 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 			children = (
 				7A25FFFE26D3E622009837AA /* SingInWithAppleButton.swift */,
 				7A25000026D3E62E009837AA /* SignInWithGoogleButton.swift */,
+				7A41E86526E04B470060DD78 /* CalendarView.swift */,
 			);
 			path = Representable;
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 				7A25FFFF26D3E622009837AA /* SingInWithAppleButton.swift in Sources */,
 				7A25FFF926D3E5FC009837AA /* LoginViewModel.swift in Sources */,
 				7A25000126D3E62E009837AA /* SignInWithGoogleButton.swift in Sources */,
+				7A41E86626E04B470060DD78 /* CalendarView.swift in Sources */,
 				7A25FFD826D3D7E5009837AA /* StartupView.swift in Sources */,
 				7A25FFF326D3E5D7009837AA /* HomeView.swift in Sources */,
 				7A25FFD626D3D7E5009837AA /* Oboegaki_iOSApp.swift in Sources */,

@@ -17,80 +17,69 @@ struct HomeView<T>: View where T: HomeViewModelObject {
     
     var body: some View {
         ZStack {
-            Color(.white).edgesIgnoringSafeArea(.all)
+            Color("backgroundGray").edgesIgnoringSafeArea(.all)
             
             VStack {
-                VStack {
-                    calendarYearMonthContainer
-                    calendarWeekContainer
-                    calendarDayContainer
-                }.padding(.horizontal, 20)
-
-            }
+                yearView
+                dayView
+                todoView
+                Spacer()
+                
+            }.background(Color(.white))
+            .cornerRadius(16)
+            .padding(.horizontal, 20)
+            
+            Spacer()
+            
         }
     }
 }
 
 extension HomeView {
-    var calendarYearMonthContainer: some View {
+    var yearView: some View {
         HStack {
             Button(action: {
                 viewModel.input.toLastMonthButtonTapped.send()
             }, label: {
                 Text("＜")
-            })
+                    .foregroundColor(Color("Primary"))
+            }).padding(.leading, 10)
             
             Spacer()
             
             Text("\(viewModel.binding.isYearAndMonthString)")
                 .font(.system(size: 20))
-                .foregroundColor(.black)
-            
-            Spacer()
+                .foregroundColor(Color("Primary"))
 
+            Spacer()
+            
             Button(action: {
                 viewModel.input.toNextMonthButtonTapped.send()
             }, label: {
                 Text("＞")
-            })
-        }.background(Color("backgroundGray"))
-        .padding(.top, 10)
+                    .foregroundColor(Color("Primary"))
+            }).padding(.trailing, 10)
+        }.padding(.top, 10)
     }
     
-    var calendarWeekContainer: some View {
-        HStack {
-            Spacer()
-            ForEach(0..<viewModel.binding.isDayOfWeekStringArray.count) { index in
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .frame(width:40,height:40)
-                        .foregroundColor(Color.clear)
-                    
-                    Text("\(viewModel.binding.isDayOfWeekStringArray[index])")
-                        .font(.system(size: 10))
-                        .foregroundColor(.gray)
-                }
+    var dayView: some View {
+        CalendarView(dayOfMonthCount: $viewModel.binding.isDayOfMonth)
+    }
+    
+    var todoView: some View {
+        List {
+            ForEach(0..<viewModel.binding.isTodoCount) { index in
+                Text("").listRowBackground((index  % 2 == 0) ? Color(.systemBlue) : Color(.white))
+
             }
-            Spacer()
+            Spacer(minLength: 40)
         }
     }
     
-    var calendarDayContainer: some View {
-        HStack{
-            Spacer()
-            ForEach(viewModel.output.isFirstWeekOfMonth, id:\.self) { index in
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .frame(width:40,height:40)
-                        .foregroundColor(Color.clear)
-                    
-                    Text("\(viewModel.output.isFirstWeekOfMonth[index])")
-                        .font(.system(size: 10))
-                        .foregroundColor(.gray)
-                }
-            }
-            Spacer()
-        }
+    var drag: some Gesture {
+        DragGesture()
+        .onEnded({ _ in
+        })
     }
 }
 
@@ -105,31 +94,23 @@ extension HomeView_Previews {
         final class Input: HomeViewModelInputObject {
             var toNextMonthButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
             var toLastMonthButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
-
+            
             var toEntryTodoViewButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
             var toSettingViewButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         }
         
         final class Binding: HomeViewModelBindingObject {
             @Published var isYearAndMonthString: String = ""
-            @Published var isDayOfWeekStringArray: Array<String> = []
+            @Published var isWhatMonth: Int = 0
+            @Published var isDayOfMonth: Array<Int> = []
             
-            @Published var isMonthCounter: Int = 0
-            @Published var isFirstWeekLength: Int = 0
-
             @Published var isTodoCount: Int = 0
-            @Published var isTodoContanor: Array<NSObject> = []
-
+            
             @Published var isLoading: Bool = false
             @Published var hasError: Bool = false
         }
         
         final class Output: HomeViewModelOutputObject {
-            @Published var isFirstWeekOfMonth: Range<Int> = 0..<0
-            @Published var isSecondWeekOfMonth: Range<Int> = 0..<0
-            @Published var isThirdWeekOfMonth: Range<Int> = 0..<0
-            @Published var isFourthWeekOfMonth: Range<Int> = 0..<0
-            @Published var isFifthWeekOfMonth: Range<Int> = 0..<0
         }
         
         var input: Input
