@@ -109,6 +109,7 @@ struct CalendarView: UIViewRepresentable {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: itemSizeWidth, height: itemSizeWidth)
         layout.headerReferenceSize = CGSize(width: 0, height: 0)
+        layout.footerReferenceSize = CGSize(width: 0, height: 0)
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
