@@ -55,7 +55,7 @@ class HomeViewModel: HomeViewModelObject {
         @Published var isWhatMonth: Int = 0
         @Published var isDayOfMonth: Array<Int> = []
         
-        @Published var isTodoCount: Int = 9
+        @Published var isTodoCount: Int = 0
         
         @Published var isLoading: Bool = false
         @Published var hasError: Bool = false
