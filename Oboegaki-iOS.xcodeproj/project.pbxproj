@@ -26,6 +26,7 @@
 		7A25FFF926D3E5FC009837AA /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A25FFF826D3E5FC009837AA /* LoginViewModel.swift */; };
 		7A25FFFD26D3E60F009837AA /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A25FFFC26D3E60F009837AA /* HomeViewModel.swift */; };
 		7A25FFFF26D3E622009837AA /* SingInWithAppleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A25FFFE26D3E622009837AA /* SingInWithAppleButton.swift */; };
+		7A3DEDC026E2FFD900E7C0B9 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3DEDBF26E2FFD900E7C0B9 /* PrivacyPolicyView.swift */; };
 		7A41E86626E04B470060DD78 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A41E86526E04B470060DD78 /* CalendarView.swift */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,7 @@
 		7A25FFF826D3E5FC009837AA /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7A25FFFC26D3E60F009837AA /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		7A25FFFE26D3E622009837AA /* SingInWithAppleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingInWithAppleButton.swift; sourceTree = "<group>"; };
+		7A3DEDBF26E2FFD900E7C0B9 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		7A41E86526E04B470060DD78 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -145,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				7A16455126D8F29F008CFC04 /* TermsOfServiceView.swift */,
+				7A3DEDBF26E2FFD900E7C0B9 /* PrivacyPolicyView.swift */,
 				7A25FFF426D3E5E7009837AA /* LoadingView.swift */,
 			);
 			path = Components;
@@ -269,6 +272,7 @@
 			files = (
 				7A25FFFD26D3E60F009837AA /* HomeViewModel.swift in Sources */,
 				7A25FFF726D3E5F3009837AA /* StartupViewModel.swift in Sources */,
+				7A3DEDC026E2FFD900E7C0B9 /* PrivacyPolicyView.swift in Sources */,
 				7A25FFED26D3E538009837AA /* ViewModelObject.swift in Sources */,
 				7A25FFFF26D3E622009837AA /* SingInWithAppleButton.swift in Sources */,
 				7A25FFF926D3E5FC009837AA /* LoginViewModel.swift in Sources */,
