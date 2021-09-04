@@ -83,24 +83,52 @@ extension HomeView {
         VStack {
             if viewModel.binding.isTodoCount != 0 {
                 List {
-                    ForEach(0..<viewModel.binding.isTodoCount) { index in
-                        Text("").listRowBackground((index  % 2 == 0) ? Color(.systemBlue) : Color(.white))
+                    ForEach(0..<viewModel.binding.isTodoCount + 1) { index in
+                        HStack {
+                            Text("")
 
+                        }.listRowBackground((index  % 2 == 0) ? Color(.systemBlue) : Color(.white))
+
+                        if index == viewModel.binding.isTodoCount {
+                            HStack {
+                                Spacer()
+
+                                Button(action: {
+                                    viewModel.input.toEntryTodoViewButtonTapped.send()
+                                }, label: {
+                                    Text("＋")
+                                        .font(.system(size: 35, weight: .light, design: .default))
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(Color(.white))
+                                        .background(Color("Primary"))
+                                        .cornerRadius(50)
+                                }).frame(width: 50, height: 50)
+                                
+                                Spacer()
+                            }
+                        }
                     }
-                    Spacer(minLength: 40)
                 }
             } else {
-                GeometryReader { geometry in
-                    Button(action: {
-                        viewModel.input.toEntryTodoViewButtonTapped.send()
-                    }, label: {
-                        Text("＋")
-                            .font(.system(size: 50, weight: .black, design: .default))
-                            .frame(width: geometry.size.width / 3, height: geometry.size.width / 3)
-                            .foregroundColor(Color(.white))
-                            .background(Color("Primary"))
-                            .cornerRadius(geometry.size.width / 3)
-                    }).frame(width: geometry.size.width, height: geometry.size.width)
+                List {
+                    ForEach(0..<1) { index in
+                        HStack {
+                            Spacer()
+
+                            Button(action: {
+                                viewModel.input.toEntryTodoViewButtonTapped.send()
+                            }, label: {
+                                Text("＋")
+                                    .font(.system(size: 50, weight: .black, design: .default))
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(Color(.white))
+                                    .background(Color("Primary"))
+                                    .cornerRadius(50)
+                            }).frame(width: 50, height: 50)
+
+                            Spacer()
+                        }
+                    }
                 }
             }
         }
