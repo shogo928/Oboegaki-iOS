@@ -21,7 +21,8 @@ protocol LoginViewModelInputObject: InputObject {
     
     var toPasswordShowTextTapped: PassthroughSubject<Void, Never> { get }
     var toLoginButtonTapped: PassthroughSubject<Void, Never> { get }
-    var toServiceInfoButtonTapped: PassthroughSubject<Void, Never> { get }
+    var toTermsOfServiceButtonTapped: PassthroughSubject<Void, Never> { get }
+    var toPrivacyPolicyButtonTapped: PassthroughSubject<Void, Never> { get }
     
     var toSignInWithAppleButtonTapped: PassthroughSubject<Void, Never> { get }
     var toSignInWithGoogleButtonTapped: PassthroughSubject<Void, Never> { get }
@@ -29,7 +30,8 @@ protocol LoginViewModelInputObject: InputObject {
 
 // MARK: - LoginViewModelObjectBindingObject
 protocol LoginViewModelBindingObject: BindingObject {
-    var isServiceInfoSheetFlag: Bool { get set }
+    var isTermsOfServiceSheetFlag: Bool { get set }
+    var isPrivacyPolicySheetFlag: Bool { get set }
     
     var isEntryEmailTextField: String { get set }
     var isEntryPasswordTextField: String { get set }
@@ -50,14 +52,16 @@ class LoginViewModel: LoginViewModelObject {
         
         var toPasswordShowTextTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         var toLoginButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
-        var toServiceInfoButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+        var toTermsOfServiceButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+        var toPrivacyPolicyButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         
         var toSignInWithAppleButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         var toSignInWithGoogleButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
     }
     
     final class Binding: LoginViewModelBindingObject {
-        @Published var isServiceInfoSheetFlag: Bool = false
+        @Published var isTermsOfServiceSheetFlag: Bool = false
+        @Published var isPrivacyPolicySheetFlag: Bool = false
         
         @Published var isEntryEmailTextField: String = ""
         @Published var isEntryPasswordTextField: String = ""
@@ -110,9 +114,15 @@ class LoginViewModel: LoginViewModelObject {
             })
             .store(in: &cancellables)
         
-        input.toServiceInfoButtonTapped
+        input.toTermsOfServiceButtonTapped
             .sink(receiveValue: { [weak self] in
-                self?.binding.isServiceInfoSheetFlag.toggle()
+                self?.binding.isTermsOfServiceSheetFlag.toggle()
+            })
+            .store(in: &cancellables)
+
+        input.toPrivacyPolicyButtonTapped
+            .sink(receiveValue: { [weak self] in
+                self?.binding.isPrivacyPolicySheetFlag.toggle()
             })
             .store(in: &cancellables)
     }

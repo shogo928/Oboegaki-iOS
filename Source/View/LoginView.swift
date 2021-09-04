@@ -82,7 +82,11 @@ struct LoginView<T>: View where T: LoginViewModelObject {
                     
                     Spacer().frame(height:20)
                     
-                    serviceInfoText
+                    termsOfServiceText
+                    
+                    Spacer().frame(height:20)
+
+                    privacyPolicyText
                 }.padding(.horizontal, 20)
                 
                 Spacer()
@@ -103,8 +107,11 @@ struct LoginView<T>: View where T: LoginViewModelObject {
             }.onChange(of: viewModel.binding.isSignInStatus) { _ in
                 presentationMode.wrappedValue.dismiss()
             }
-            .fullScreenCover(isPresented: $viewModel.binding.isServiceInfoSheetFlag) {
+            .fullScreenCover(isPresented: $viewModel.binding.isTermsOfServiceSheetFlag) {
                 TermsOfServiceView()
+            }
+            .fullScreenCover(isPresented: $viewModel.binding.isPrivacyPolicySheetFlag) {
+                PrivacyPolicyView()
             }
         }
     }
@@ -154,10 +161,9 @@ extension LoginView {
     
     var passwordOpenTextField: some View {
         VStack {
-            TextField("8〜16文字のパスワードを入力してください。", text: $viewModel.binding.isEntryPasswordTextField)
+            TextField("8〜16文字のパスワード", text: $viewModel.binding.isEntryPasswordTextField)
                 .preferredColorScheme(.light)
                 .autocapitalization(.none)
-                .font(.system(size: 15.7, weight: .medium, design: .default))
         }
     }
     
@@ -185,12 +191,24 @@ extension LoginView {
         .frame(width: 200, height: 40, alignment: .center)
     }
     
-    var serviceInfoText: some View {
+    var termsOfServiceText: some View {
         Button(
             action: {
-                viewModel.input.toServiceInfoButtonTapped.send()
+                viewModel.input.toTermsOfServiceButtonTapped.send()
             }, label: {
                 Text("利用規約")
+                    .foregroundColor(.white)
+                    .underline()
+            }
+        )
+    }
+    
+    var privacyPolicyText: some View {
+        Button(
+            action: {
+                viewModel.input.toPrivacyPolicyButtonTapped.send()
+            }, label: {
+                Text("プライバシーポリシー")
                     .foregroundColor(.white)
                     .underline()
             }
@@ -248,15 +266,17 @@ extension LoginView_Previews {
             
             var toPasswordShowTextTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
             var toLoginButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
-            var toServiceInfoButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
-
+            var toTermsOfServiceButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+            var toPrivacyPolicyButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+            
             var toSignInWithAppleButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
             var toSignInWithGoogleButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         }
         
         final class Binding: LoginViewModelBindingObject {
-            @Published var isServiceInfoSheetFlag: Bool = false
-
+            @Published var isTermsOfServiceSheetFlag: Bool = false
+            @Published var isPrivacyPolicySheetFlag: Bool = false
+            
             @Published var isEntryEmailTextField: String = ""
             @Published var isEntryPasswordTextField: String = ""
             @Published var isEntryPasswordShowFlag: Bool = false
