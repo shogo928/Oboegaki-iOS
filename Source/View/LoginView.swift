@@ -161,10 +161,9 @@ extension LoginView {
     
     var passwordOpenTextField: some View {
         VStack {
-            TextField("8〜16文字のパスワードを入力してください。", text: $viewModel.binding.isEntryPasswordTextField)
+            TextField("8〜16文字のパスワード", text: $viewModel.binding.isEntryPasswordTextField)
                 .preferredColorScheme(.light)
                 .autocapitalization(.none)
-                .font(.system(size: 15.7, weight: .medium, design: .default))
         }
     }
     
