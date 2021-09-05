@@ -38,18 +38,18 @@ extension PrivacyPolicyView {
         HStack {
             Rectangle()
                 .frame(height: 1)
-                .foregroundColor(Color("MediumGray"))
+                .foregroundColor(Color("Gray100"))
                 .cornerRadius(24)
             Spacer()
             Text("利用規約")
                 .font(.system(size: 30, weight: .black, design: .default))
-                .foregroundColor(Color("MediumGray"))
+                .foregroundColor(Color("Gray100"))
                 .lineLimit(1)
                 .frame(width: 140)
             Spacer()
             Rectangle()
                 .frame(height: 1)
-                .foregroundColor(Color("MediumGray"))
+                .foregroundColor(Color("Gray100"))
                 .cornerRadius(24)
         }.padding(.horizontal, 20)
     }
@@ -132,7 +132,7 @@ extension PrivacyPolicyView {
                     .foregroundColor(.black)
                     .multilineTextAlignment(.leading)
                     .frame(width: geometry.size.width)
-            }.background(Color("backgroundGray"))
+            }.background(Color("White240"))
         }
     }
     

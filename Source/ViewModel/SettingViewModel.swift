@@ -86,7 +86,7 @@ class SettingViewModel: SettingViewModelObject {
         output.isSettingUserArray += ["名前"]
         output.isSettingAccountArray += ["ログアウト","退会"]
         output.isSettingThemeArray += ["システムカラー"]
-        output.isSettingOboegakiArray += ["バージョン","レビューを書く"]
+        output.isSettingOboegakiArray += ["バージョン","ライセンス","レビューを書く"]
 
         input.toUserNameButtonTapped
             .sink(receiveValue: { [weak self] in
