@@ -84,6 +84,8 @@ struct CalendarView: UIViewRepresentable {
             fileprivate var textView = Text("")
             fileprivate var customView: UIHostingController<Text>?
             
+            fileprivate let bottomBorder = CALayer()
+            
             fileprivate override init(frame: CGRect) {
                 super.init(frame: frame)
                 
@@ -91,6 +93,14 @@ struct CalendarView: UIViewRepresentable {
                 customView!.view.frame = CGRect(origin: .zero, size: contentView.bounds.size)
                 customView!.view.backgroundColor = .white
                 contentView.addSubview(customView!.view)
+                
+                bottomBorder.frame = CGRect(x: 0, y: contentView.frame.height - 1, width: contentView.frame.width, height: 1)
+                bottomBorder.backgroundColor = UIColor.lightGray.cgColor
+
+                //作成したViewに上線を追加
+                contentView.layer.addSublayer(bottomBorder)
+
+
             }
             
             internal required init?(coder: NSCoder) {
@@ -107,7 +117,7 @@ struct CalendarView: UIViewRepresentable {
         let itemSizeWidth: CGFloat = (UIScreen.main.bounds.width - 40) / 7
         
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: itemSizeWidth, height: itemSizeWidth)
+        layout.itemSize = CGSize(width: itemSizeWidth, height: itemSizeWidth - 10)
         layout.headerReferenceSize = CGSize(width: 0, height: 0)
         layout.footerReferenceSize = CGSize(width: 0, height: 0)
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)

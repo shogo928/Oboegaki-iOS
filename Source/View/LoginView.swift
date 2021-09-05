@@ -183,7 +183,8 @@ extension LoginView {
             }, label: {
                 Text("開始する")
                     .frame(width: 200, height: 40, alignment: .center)
-                    .background(Color("ClearWhite"))
+                    .font(.system(size: 16, weight: .regular, design: .default))
+                    .background(Color("Primary").opacity(0.3))
                     .foregroundColor(.white)
                     .cornerRadius(9)
             }
@@ -219,18 +220,18 @@ extension LoginView {
         HStack {
             Rectangle()
                 .frame(height: 1)
-                .foregroundColor(Color("MediumGray"))
+                .foregroundColor(Color("Gray100"))
                 .cornerRadius(24)
             Spacer()
             Text("サービスで開始する")
                 .font(.system(size: 16, weight: .light, design: .default))
-                .foregroundColor(Color("MediumGray"))
+                .foregroundColor(Color("Gray100"))
                 .lineLimit(1)
                 .frame(width: 140)
             Spacer()
             Rectangle()
                 .frame(height: 1)
-                .foregroundColor(Color("MediumGray"))
+                .foregroundColor(Color("Gray100"))
                 .cornerRadius(24)
         }.padding(.horizontal, 20)
     }

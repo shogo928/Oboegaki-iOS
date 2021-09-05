@@ -17,7 +17,7 @@ struct SettingView<T>: View where T: SettingViewModelObject {
     
     var body: some View {
         ZStack {
-            Color(("Primary")).edgesIgnoringSafeArea(.all)
+            Color("Primary").edgesIgnoringSafeArea(.all)
             
             VStack {
                 settingText
@@ -91,7 +91,7 @@ private extension SettingView {
                     }
                 }
             }
-            Section(header: Text("Oboegakiについて")){
+            Section(header: Text("本アプリについて")){
                 ForEach(0..<viewModel.output.isSettingOboegakiArray.count, id: \.self) { value in
                     HStack {
                         Text(viewModel.output.isSettingOboegakiArray[value])
