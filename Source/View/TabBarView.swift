@@ -27,24 +27,20 @@ struct TabBarView: View {
                             Text("List")
                         }
                     }.tag(1)
-                /*
-                 ToDoView(viewModel: ToDoViewModel())
-                 .tabItem {
-                 VStack {
-                 Image(systemName: "pencil")
-                 Text("ToDo")
-                 }
-                 }.tag(2)
-                 .animation(Animation.spring())
-                 .accentColor(Color("Primary"))
-                 */
+                CreateToDoView(viewModel: CreateToDoViewModel())
+                    .tabItem {
+                        VStack {
+                            Image(systemName: "pencil")
+                            Text("ToDo")
+                        }
+                    }.tag(2)
                 SettingView(viewModel: SettingViewModel())
                     .tabItem {
                         VStack {
                             Image(systemName: "gearshape.fill")
                             Text("Setting")
                         }
-                    }.tag(2)
+                    }.tag(3)
             }.accentColor(Color("Primary"))
         }
     }
