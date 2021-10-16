@@ -20,27 +20,26 @@ struct HomeView<T>: View where T: HomeViewModelObject {
             Color("Primary").edgesIgnoringSafeArea(.all)
             
             VStack {
-                yearView
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 14)
-
                 VStack {
-                    Spacer().frame(height: 20)
-
-                    dayView
-                        .background(Color(.white))
-                        .frame(height: 290)
-                        .cornerRadius(16)
-                        .padding(.horizontal, 20)
+                    viewTitleText
+                }.padding(.bottom, 10)
+                
+                VStack {
+                    Spacer().frame(height: 16)
                     
-                    Spacer().frame(height: 20)
-
+                    calendarView
+                        .background(Color(.white))
+                        .cornerRadius(14)
+                        .padding(.horizontal, 16)
+                    
+                    Spacer().frame(height: 16)
+                    
                     todoView
                         .background(Color(.white))
-                        .cornerRadius(16)
-                        .padding(.horizontal, 20)
+                        .cornerRadius(14)
+                        .padding(.horizontal, 16)
                     
-                    Spacer().frame(height: 20)
+                    Spacer().frame(height: 16)
                 }.background(Color("System246"))
             }
         }
@@ -48,36 +47,101 @@ struct HomeView<T>: View where T: HomeViewModelObject {
 }
 
 extension HomeView {
-    var yearView: some View {
-        HStack {
-            Button(action: {
-                viewModel.input.toLastMonthButtonTapped.send()
-            }, label: {
-                Text("＜")
-                    .font(.system(size: 20, weight: .bold, design: .default))
-                    .foregroundColor(.white)
-            })
-            
-            Spacer()
-            
-            Text("\(viewModel.binding.isYearAndMonthString)")
-                .font(.system(size: 20, weight: .bold, design: .default))
-                .foregroundColor(.white)
-            
-            Spacer()
-            
-            Button(action: {
-                viewModel.input.toNextMonthButtonTapped.send()
-            }, label: {
-                Text("＞")
-                    .font(.system(size: 20, weight: .bold, design: .default))
-                    .foregroundColor(.white)
-            })
-        }
+    var viewTitleText: some View {
+        Text("スケジュール")
+            .font(.system(size: 20, weight: .bold, design: .default))
+            .foregroundColor(Color(.white))
     }
     
-    var dayView: some View {
-        CalendarView(dayOfMonthCount: $viewModel.binding.isDayOfMonth)
+    var calendarView: some View {
+        VStack {
+            HStack {
+                Text("\(viewModel.binding.isYearAndMonthString)")
+                    .font(.system(size: 20, weight: .bold, design: .default))
+                    .foregroundColor(Color("Primary"))
+                
+                Spacer()
+                
+                Button(action: {
+                    viewModel.input.toLastMonthActioned.send()
+                }, label: {
+                    Text("＜")
+                        .font(.system(size: 20, weight: .bold, design: .default))
+                        .foregroundColor(Color("Primary"))
+                })
+                
+                Button(action: {
+                    viewModel.input.toNextMonthActioned.send()
+                }, label: {
+                    Text("＞")
+                        .font(.system(size: 20, weight: .bold, design: .default))
+                        .foregroundColor(Color("Primary"))
+                })
+            }.padding(.horizontal, 10)
+            .padding(.top, 10)
+            
+            WeekView()
+                .frame(height: 30)
+            
+            GeometryReader { geometry in
+                ScrollViewReader { scrollProxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(alignment: .top) {
+                            CalendarView($viewModel.binding.isLatestMonthArray)
+                        }
+                    }.content.offset(x: CGFloat(viewModel.binding.isScrollOffset))
+                    .gesture(DragGesture()
+                                .onChanged { value in
+                                    viewModel.input.toScrollOffsetChanged.send(Double(value.translation.width))
+                                }
+                                .onEnded { value in
+                                    if value.predictedEndTranslation.width > geometry.size.width / 2 {
+                                        viewModel.input.toLastMonthActioned.send()
+                                        
+                                        withAnimation(.easeOut(duration: 0.2)) {
+                                            viewModel.input.toScrollOffsetChanged.send(Double(geometry.size.width))
+                                        }
+                                        
+                                        viewModel.input.toRePositionScrollOffsetChanged.send(-Double(geometry.size.width))
+                                        
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
+                                            withAnimation(.easeOut(duration: 0.2)) {
+                                                viewModel.input.toScrollOffsetChanged.send(0.0)
+                                            }
+                                        }
+
+                                    } else if value.predictedEndTranslation.width < -geometry.size.width / 2 {
+                                        viewModel.input.toNextMonthActioned.send()
+                                        
+                                        withAnimation(.easeOut(duration: 0.2)) {
+                                            viewModel.input.toScrollOffsetChanged.send(-Double(geometry.size.width))
+                                        }
+                                        
+                                        viewModel.input.toRePositionScrollOffsetChanged.send(Double(geometry.size.width))
+                                        
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
+                                            withAnimation(.easeOut(duration: 0.2)) {
+                                                viewModel.input.toScrollOffsetChanged.send(0.0)
+                                            }
+                                        }
+                                    }
+                                    
+                                    if value.predictedEndTranslation.width > -geometry.size.width / 2 && value.predictedEndTranslation.width < geometry.size.width / 2 {
+                                        withAnimation {
+                                            viewModel.input.toScrollOffsetChanged.send(0.0)
+                                        }
+                                    }
+                                }
+                    )
+                }
+            }.frame(height: CGFloat(viewModel.binding.isCalendarViewHeight))
+            .onChange(of: viewModel.binding.isLatestMonthArray) { _ in
+                withAnimation {
+                    viewModel.input.toCalendarViewHeightChanged.send()
+                }
+            }
+        }
+        .padding(.horizontal, 10)
     }
     
     var todoView: some View {
@@ -136,12 +200,6 @@ extension HomeView {
             }
         }
     }
-    
-    var drag: some Gesture {
-        DragGesture()
-            .onEnded({ _ in
-            })
-    }
 }
 
 struct HomeView_Previews: PreviewProvider {
@@ -153,18 +211,28 @@ struct HomeView_Previews: PreviewProvider {
 extension HomeView_Previews {
     final class MockViewModel: HomeViewModelObject {
         final class Input: HomeViewModelInputObject {
-            var toNextMonthButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
-            var toLastMonthButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+            var toNextMonthActioned: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+            var toLastMonthActioned: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
             
+            var toScrollOffsetChanged: PassthroughSubject<Double, Never> = PassthroughSubject<Double, Never>()
+            var toRePositionScrollOffsetChanged: PassthroughSubject<Double, Never> = PassthroughSubject<Double, Never>()
+
+            var toCalendarViewHeightChanged: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+
             var toEntryTodoViewButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
-            var toSettingViewButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         }
         
         final class Binding: HomeViewModelBindingObject {
             @Published var isYearAndMonthString: String = ""
+            @Published var isNowMonthString: String = ""
+            @Published var isWeekArray: [String] = []
             @Published var isWhatMonth: Int = 0
-            @Published var isDayOfMonth: Array<Int> = []
+            @Published var isWhatToday: Int = 0
+            @Published var isLatestMonthArray: [Int] = []
             
+            @Published var isCalendarViewHeight: Int = 0
+            @Published var isScrollOffset: Double = 0.0
+
             @Published var isTodoCount: Int = 0
             
             @Published var isLoading: Bool = false
@@ -172,6 +240,7 @@ extension HomeView_Previews {
         }
         
         final class Output: HomeViewModelOutputObject {
+            @Published var lastMonthArray: Array<Int> = []
         }
         
         var input: Input
@@ -187,3 +256,4 @@ extension HomeView_Previews {
         }
     }
 }
+

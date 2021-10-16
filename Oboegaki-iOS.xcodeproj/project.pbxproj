@@ -32,6 +32,7 @@
 		7A3DEDD826E4F82E00E7C0B9 /* CreateToDoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3DEDD726E4F82E00E7C0B9 /* CreateToDoView.swift */; };
 		7A3DEDDA26E4F86D00E7C0B9 /* CreateToDoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3DEDD926E4F86D00E7C0B9 /* CreateToDoViewModel.swift */; };
 		7A41E86626E04B470060DD78 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A41E86526E04B470060DD78 /* CalendarView.swift */; };
+		7A51C8E627167623009C7645 /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A51C8E527167623009C7645 /* WeekView.swift */; };
 		7A81F3F126ECE80E00467DA0 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 7A81F3F026ECE80E00467DA0 /* FirebaseAnalytics */; };
 		7A81F3F326ECE80E00467DA0 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 7A81F3F226ECE80E00467DA0 /* FirebaseCrashlytics */; };
 		7A81F3F526ECE80E00467DA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7A81F3F426ECE80E00467DA0 /* FirebaseAuth */; };
@@ -72,6 +73,7 @@
 		7A3DEDD726E4F82E00E7C0B9 /* CreateToDoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateToDoView.swift; sourceTree = "<group>"; };
 		7A3DEDD926E4F86D00E7C0B9 /* CreateToDoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateToDoViewModel.swift; sourceTree = "<group>"; };
 		7A41E86526E04B470060DD78 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		7A51C8E527167623009C7645 /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
 		7A81F3FD26EF412E00467DA0 /* FirebaseAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthClient.swift; sourceTree = "<group>"; };
 		7A81F3FF26EF413E00467DA0 /* FirebaseAuthClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthClientError.swift; sourceTree = "<group>"; };
 		7A81F40126EF46B600467DA0 /* UserDefaultsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsClient.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 				7A25FFFE26D3E622009837AA /* SingInWithAppleButton.swift */,
 				7A25000026D3E62E009837AA /* SignInWithGoogleButton.swift */,
 				7A41E86526E04B470060DD78 /* CalendarView.swift */,
+				7A51C8E527167623009C7645 /* WeekView.swift */,
 			);
 			path = Representable;
 			sourceTree = "<group>";
@@ -350,6 +353,7 @@
 				7A25000126D3E62E009837AA /* SignInWithGoogleButton.swift in Sources */,
 				7A41E86626E04B470060DD78 /* CalendarView.swift in Sources */,
 				7A3DEDD826E4F82E00E7C0B9 /* CreateToDoView.swift in Sources */,
+				7A51C8E627167623009C7645 /* WeekView.swift in Sources */,
 				7A25FFD826D3D7E5009837AA /* StartupView.swift in Sources */,
 				7A25FFF326D3E5D7009837AA /* HomeView.swift in Sources */,
 				7A3DEDD226E32BF000E7C0B9 /* SettingViewModel.swift in Sources */,
@@ -489,6 +493,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Oboegaki-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "Source/Preview\\ Content";
+				DEVELOPMENT_TEAM = 25PNL545V9;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Supportings/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -511,6 +516,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Oboegaki-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "Source/Preview\\ Content";
+				DEVELOPMENT_TEAM = 25PNL545V9;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Supportings/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
