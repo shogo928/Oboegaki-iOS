@@ -8,116 +8,83 @@
 import SwiftUI
 
 struct CalendarView: UIViewRepresentable {
-    @Binding var dayOfMonthCount: [Int]
+    @Binding var latestMonthArray: [Int]
+    
+    init(_ latestMonthArray: Binding<[Int]>) {
+        self._latestMonthArray = latestMonthArray
+    }
     
     class Coordinator: NSObject, UICollectionViewDelegate, UICollectionViewDataSource {
-        let dayOfWeekStringArray = ["日","月","火","水","木","金","土"]
+        var selectedCellStore = 0
         
-        @Binding var dayOfMonthCount: [Int]
+        @Binding var latestMonthArray: [Int]
         
-        init(_ dayOfMonthCount: Binding<[Int]>) {
-            self._dayOfMonthCount = dayOfMonthCount
-        }
-        
-        func numberOfSections(in collectionView: UICollectionView) -> Int {
-            return 2
+        init(_ latestMonthArray: Binding<[Int]>) {
+            self._latestMonthArray = latestMonthArray
         }
         
         func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            switch section {
-            case 0:
-                return dayOfWeekStringArray.count
-            case 1:
-                return dayOfMonthCount.count
-            default:
-                return 0
-            }
-        }
-        
-        func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-            let headerLine = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Section", for: indexPath)
-            headerLine.backgroundColor = .white
-            
-            return headerLine
+            return latestMonthArray.count
         }
         
         func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! Cell
             
-            switch indexPath.section {
+            let selectedBackGroundView = UIView(frame: cell.frame)
+            selectedBackGroundView.backgroundColor = UIColor(named: "Primary")!.withAlphaComponent(0.3)
+            
+            let beforeSelectedBackGroundView = UIView(frame: cell.frame)
+            beforeSelectedBackGroundView.backgroundColor = .white
+            
+            switch latestMonthArray[indexPath.item] {
             case 0:
-                switch indexPath.item {
-                case 0:
-                    cell.customView?.rootView = Text("\(dayOfWeekStringArray[indexPath.item])").foregroundColor(.red)
-                case 6:
-                    cell.customView?.rootView = Text("\(dayOfWeekStringArray[indexPath.item])").foregroundColor(.blue)
-                default:
-                    cell.customView?.rootView = Text("\(dayOfWeekStringArray[indexPath.item])").foregroundColor(.gray)
+                cell.customView?.rootView = Text("")
+            default :
+                cell.customView?.rootView = Text("\(latestMonthArray[indexPath.item])").foregroundColor(.gray)
+                cell.bottomBorder.frame = CGRect(x: 0,
+                                                 y: cell.contentView.frame.height - 1,
+                                                 width: cell.contentView.frame.width,
+                                                 height: 1)
+                cell.bottomBorder.backgroundColor = UIColor(named: "Gray200")!.cgColor
+                cell.contentView.layer.addSublayer(cell.bottomBorder)
+                
+                cell.selectedBackgroundView = selectedBackGroundView
+                
+                if indexPath.item == selectedCellStore {
+                    cell.selectedBackgroundView = beforeSelectedBackGroundView
                 }
-            case 1:
-                if dayOfMonthCount[indexPath.item] == 0 {
-                    cell.customView?.rootView = Text("").foregroundColor(.gray)
-                } else {
-                    cell.customView?.rootView = Text("\(dayOfMonthCount[indexPath.item])").foregroundColor(.gray)
-                }
-            default:
-                print("section error")
-                cell.backgroundColor = UIColor.white
             }
             
             return cell
         }
         
         func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-            switch indexPath.section {
-            case 0:
-                print("選択しました: \(dayOfWeekStringArray[indexPath.item])")
-            case 1:
-                if dayOfMonthCount[indexPath.item] != 0 {
-                    print("選択しました: \(dayOfMonthCount[indexPath.item])")
-                }
-            default: print("section error")
-            }
-        }
-        
-        final class Cell: UICollectionViewCell {
-            fileprivate var textView = Text("")
-            fileprivate var customView: UIHostingController<Text>?
-            
-            fileprivate let bottomBorder = CALayer()
-            
-            fileprivate override init(frame: CGRect) {
-                super.init(frame: frame)
-                
-                customView = UIHostingController(rootView: textView)
-                customView!.view.frame = CGRect(origin: .zero, size: contentView.bounds.size)
-                customView!.view.backgroundColor = .white
-                contentView.addSubview(customView!.view)
-                
-                bottomBorder.frame = CGRect(x: 0, y: contentView.frame.height - 1, width: contentView.frame.width, height: 1)
-                bottomBorder.backgroundColor = UIColor.lightGray.cgColor
-
-                //作成したViewに上線を追加
-                contentView.layer.addSublayer(bottomBorder)
-
-
-            }
-            
-            internal required init?(coder: NSCoder) {
-                fatalError("init(coder:) has not been implemented")
+            if latestMonthArray[indexPath.item] != 0 {
+                collectionView.performBatchUpdates({
+                    if selectedCellStore != 0 {
+                        collectionView.reloadItems(at: [IndexPath(item: selectedCellStore, section: 0)])
+                        selectedCellStore = indexPath.item
+                    } else {
+                        selectedCellStore = indexPath.item
+                        let cell = collectionView.cellForItem(at: IndexPath(item: selectedCellStore, section: 0)) as! Cell
+                        let selectedBackGroundView = UIView(frame: cell.frame)
+                        selectedBackGroundView.backgroundColor = UIColor(named: "Primary")!.withAlphaComponent(0.3)
+                        cell.selectedBackgroundView = selectedBackGroundView
+                    }
+                })
             }
         }
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator($dayOfMonthCount)
+        Coordinator($latestMonthArray)
     }
     
-    func makeUIView(context: Context) -> UICollectionView {
-        let itemSizeWidth: CGFloat = (UIScreen.main.bounds.width - 40) / 7
+    func makeUIView(context: UIViewRepresentableContext<CalendarView>) -> UICollectionView {
+        let itemSizeWidth = (UIScreen.main.bounds.width - 53) / 7
         
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: itemSizeWidth, height: itemSizeWidth - 10)
+        layout.itemSize = CGSize(width: itemSizeWidth, height: 40)
         layout.headerReferenceSize = CGSize(width: 0, height: 0)
         layout.footerReferenceSize = CGSize(width: 0, height: 0)
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -126,19 +93,48 @@ struct CalendarView: UIViewRepresentable {
         layout.scrollDirection = .vertical
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.isScrollEnabled = false
+        collectionView.isPagingEnabled = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.allowsMultipleSelection = true
+        collectionView.register(Cell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.backgroundColor = .white
+        
         collectionView.dataSource = context.coordinator
         collectionView.delegate = context.coordinator
-        collectionView.isScrollEnabled = false
-        collectionView.isPagingEnabled = true
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.register(Coordinator.Cell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Section")
-        collectionView.register(Coordinator.Cell.self, forCellWithReuseIdentifier: "Cell")
-        collectionView.backgroundColor = .white
         return collectionView
     }
     
-    func updateUIView(_ uiView: UICollectionView, context _: Context) {
+    func updateUIView(_ uiView: UICollectionView, context : UIViewRepresentableContext<CalendarView>) {
         uiView.reloadData()
     }
+    
+    final class Cell: UICollectionViewCell {
+        fileprivate var textView = Text("")
+        fileprivate var customView: UIHostingController<Text>?
+        
+        fileprivate var bottomBorder = CALayer()
+        
+        fileprivate override init(frame: CGRect) {
+            super.init(frame: frame)
+            
+            customView = UIHostingController(rootView: textView)
+            customView!.view.frame = CGRect(origin: .zero, size: contentView.bounds.size)
+            customView!.view.backgroundColor = .clear
+            contentView.addSubview(customView!.view)
+        }
+        
+        internal required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        internal override func prepareForReuse() {
+            super.prepareForReuse()
+            bottomBorder.removeFromSuperlayer()
+        }
+    }
 }
+
+
