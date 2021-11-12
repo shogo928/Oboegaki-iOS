@@ -13,191 +13,265 @@ struct HomeView<T>: View where T: HomeViewModelObject {
     
     init(viewModel: T) {
         self.viewModel = viewModel
+        
+        UINavigationBarAppearance().configureWithOpaqueBackground()
+        UINavigationBar.appearance().barTintColor = UIColor(ColorComponents.primary)
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
+        UINavigationBar.appearance().tintColor = .white
     }
     
     var body: some View {
-        ZStack {
-            Color("Primary").edgesIgnoringSafeArea(.all)
-            
-            VStack {
-                VStack {
-                    viewTitleText
-                }.padding(.bottom, 10)
+        NavigationView {
+            ZStack {
+                ColorComponents.backGround246.edgesIgnoringSafeArea(.all)
                 
-                VStack {
-                    Spacer().frame(height: 16)
+                ScrollView(.vertical, showsIndicators: false) {
+                    Spacer().frame(height: 10)
                     
-                    calendarView
-                        .background(Color(.white))
-                        .cornerRadius(14)
-                        .padding(.horizontal, 16)
+                    VStack(spacing: 0) {
+                        yearView
+                        
+                        weekView
+                        
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(ColorComponents.gray100)
+                            .cornerRadius(24)
+                            .padding(.bottom, 10)
+                        
+                        calendarView
+                        
+                    }.padding(.horizontal, 10)
+                    .background(Color(.white))
+                    .cornerRadius(14)
                     
-                    Spacer().frame(height: 16)
+                    Spacer().frame(height: 10)
                     
-                    todoView
-                        .background(Color(.white))
-                        .cornerRadius(14)
-                        .padding(.horizontal, 16)
+                    VStack(spacing: 0) {
+                        todoToolBarView
+                        
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(ColorComponents.gray100)
+                            .cornerRadius(24)
+                        
+                        if viewModel.binding.isTodoCount != 0 {
+                            validTodoListView
+                        } else {
+                            invalidTodoListView
+                        }
+                        
+                        Spacer().frame(height: 10)
+                        
+                    }.frame(height: 300)
+                    .padding(.horizontal, 10)
+                    .background(Color(.white))
+                    .cornerRadius(14)
                     
-                    Spacer().frame(height: 16)
-                }.background(Color("System246"))
+                    Spacer().frame(height: 10)
+                    
+                }.padding(.horizontal, 10)
+                .background(ColorComponents.backGround246)
             }
         }
     }
 }
 
 extension HomeView {
-    var viewTitleText: some View {
-        Text("スケジュール")
-            .font(.system(size: 20, weight: .bold, design: .default))
-            .foregroundColor(Color(.white))
+    var yearView: some View {
+        HStack {
+            Text("\(viewModel.output.isCurrentYearInt)年" + "\(viewModel.output.isCurrentMonthInt)月")
+                .font(.system(size: 20, weight: .bold, design: .default))
+                .foregroundColor(ColorComponents.primary)
+            
+            Spacer()
+            
+            Button(action: {
+                viewModel.input.toLastMonthActioned.send()
+            }, label: {
+                Text("＜")
+                    .font(.system(size: 20, weight: .bold, design: .default))
+                    .foregroundColor(ColorComponents.primary)
+            })
+            
+            Spacer().frame(width: 20)
+            
+            Button(action: {
+                viewModel.input.toNextMonthActioned.send()
+            }, label: {
+                Text("＞")
+                    .font(.system(size: 20, weight: .bold, design: .default))
+                    .foregroundColor(ColorComponents.primary)
+            })
+        }.padding(.vertical, 10)
+    }
+    
+    var weekView: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0, alignment: .top), count: 7), spacing: 10) {
+            ForEach(0..<viewModel.output.isWeekArray.count) {
+                switch viewModel.output.isWeekArray[$0] {
+                case "日":
+                    Text("\(viewModel.output.isWeekArray[$0])")
+                        .font(.system(size: 14, weight: .medium, design: .default))
+                        .foregroundColor(.red)
+                case "土":
+                    Text("\(viewModel.output.isWeekArray[$0])")
+                        .font(.system(size: 14, weight: .medium, design: .default))
+                        .foregroundColor(.blue)
+                default :
+                    Text("\(viewModel.output.isWeekArray[$0])")
+                        .font(.system(size: 14, weight: .medium, design: .default))
+                        .foregroundColor(ColorComponents.gray100)
+                }
+            }
+        }.frame(height: 25)
+        
     }
     
     var calendarView: some View {
-        VStack {
-            HStack {
-                Text("\(viewModel.binding.isYearAndMonthString)")
-                    .font(.system(size: 20, weight: .bold, design: .default))
-                    .foregroundColor(Color("Primary"))
-                
-                Spacer()
-                
-                Button(action: {
-                    viewModel.input.toLastMonthActioned.send()
-                }, label: {
-                    Text("＜")
-                        .font(.system(size: 20, weight: .bold, design: .default))
-                        .foregroundColor(Color("Primary"))
-                })
-                
-                Button(action: {
-                    viewModel.input.toNextMonthActioned.send()
-                }, label: {
-                    Text("＞")
-                        .font(.system(size: 20, weight: .bold, design: .default))
-                        .foregroundColor(Color("Primary"))
-                })
-            }.padding(.horizontal, 10)
-            .padding(.top, 10)
-            
-            WeekView()
-                .frame(height: 30)
-            
-            GeometryReader { geometry in
-                ScrollViewReader { scrollProxy in
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .top) {
-                            CalendarView($viewModel.binding.isLatestMonthArray)
-                        }
-                    }.content.offset(x: CGFloat(viewModel.binding.isScrollOffset))
-                    .gesture(DragGesture()
-                                .onChanged { value in
-                                    viewModel.input.toScrollOffsetChanged.send(Double(value.translation.width))
+        GeometryReader { geometry in
+            ScrollViewReader { scrollProxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0, alignment: .top), count: 7), spacing: 10) {
+                        ForEach(viewModel.output.isCurrentMonthDate, id: \.id) { currentMonthDate in
+                            if currentMonthDate.day == 0 {
+                                VStack {}
+                            } else {
+                                VStack(spacing: 0) {
+                                    Text("\(currentMonthDate.day)")
+                                        .frame(height: 55, alignment: .top)
+                                        .font(.system(size: 14, weight: .light, design: .default))
+                                        .foregroundColor(Color(viewModel.binding.isSelectedColumn == currentMonthDate.id ? .white : UIColor(ColorComponents.gray50)))
+                                    
+                                    Rectangle()
+                                        .frame(height: 0.5)
+                                        .foregroundColor(ColorComponents.gray150)
+                                        .cornerRadius(24)
+                                }.background(
+                                    Color(viewModel.binding.isSelectedColumn == currentMonthDate.id ? UIColor(ColorComponents.primary) : .clear)
+                                        .cornerRadius(9)
+                                        .offset(y: -5)
+                                ).onTapGesture {
+                                    viewModel.input.toDateSelected.send(currentMonthDate.day)
+                                    withAnimation {
+                                        viewModel.input.toColumnSelected.send(currentMonthDate.id)
+                                    }
                                 }
-                                .onEnded { value in
-                                    if value.predictedEndTranslation.width > geometry.size.width / 2 {
-                                        viewModel.input.toLastMonthActioned.send()
-                                        
+                            }
+                        }
+                    }.contentShape(RoundedRectangle(cornerRadius: 0))
+                }.content.offset(x: CGFloat(viewModel.binding.isScrollOffset))
+                .gesture(DragGesture()
+                            .onChanged { value in
+                                viewModel.input.toScrollOffsetChanged.send(Double(value.translation.width))
+                            }
+                            .onEnded { value in
+                                if value.predictedEndTranslation.width > geometry.size.width / 2 {
+                                    viewModel.input.toLastMonthActioned.send()
+                                    
+                                    withAnimation(.easeOut(duration: 0.2)) {
+                                        viewModel.input.toScrollOffsetChanged.send(Double(geometry.size.width))
+                                    }
+                                    
+                                    viewModel.input.toRePositionScrollOffsetChanged.send(-Double(geometry.size.width))
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
                                         withAnimation(.easeOut(duration: 0.2)) {
-                                            viewModel.input.toScrollOffsetChanged.send(Double(geometry.size.width))
-                                        }
-                                        
-                                        viewModel.input.toRePositionScrollOffsetChanged.send(-Double(geometry.size.width))
-                                        
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
-                                            withAnimation(.easeOut(duration: 0.2)) {
-                                                viewModel.input.toScrollOffsetChanged.send(0.0)
-                                            }
-                                        }
-
-                                    } else if value.predictedEndTranslation.width < -geometry.size.width / 2 {
-                                        viewModel.input.toNextMonthActioned.send()
-                                        
-                                        withAnimation(.easeOut(duration: 0.2)) {
-                                            viewModel.input.toScrollOffsetChanged.send(-Double(geometry.size.width))
-                                        }
-                                        
-                                        viewModel.input.toRePositionScrollOffsetChanged.send(Double(geometry.size.width))
-                                        
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
-                                            withAnimation(.easeOut(duration: 0.2)) {
-                                                viewModel.input.toScrollOffsetChanged.send(0.0)
-                                            }
+                                            viewModel.input.toScrollOffsetChanged.send(0.0)
                                         }
                                     }
                                     
-                                    if value.predictedEndTranslation.width > -geometry.size.width / 2 && value.predictedEndTranslation.width < geometry.size.width / 2 {
-                                        withAnimation {
+                                } else if value.predictedEndTranslation.width < -geometry.size.width / 2 {
+                                    viewModel.input.toNextMonthActioned.send()
+                                    
+                                    withAnimation(.easeOut(duration: 0.2)) {
+                                        viewModel.input.toScrollOffsetChanged.send(-Double(geometry.size.width))
+                                    }
+                                    
+                                    viewModel.input.toRePositionScrollOffsetChanged.send(Double(geometry.size.width))
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.21) {
+                                        withAnimation(.easeOut(duration: 0.2)) {
                                             viewModel.input.toScrollOffsetChanged.send(0.0)
                                         }
                                     }
                                 }
-                    )
-                }
-            }.frame(height: CGFloat(viewModel.binding.isCalendarViewHeight))
-            .onChange(of: viewModel.binding.isLatestMonthArray) { _ in
-                withAnimation {
-                    viewModel.input.toCalendarViewHeightChanged.send()
-                }
+                                
+                                if value.predictedEndTranslation.width > -geometry.size.width / 2 && value.predictedEndTranslation.width < geometry.size.width / 2 {
+                                    withAnimation {
+                                        viewModel.input.toScrollOffsetChanged.send(0.0)
+                                    }
+                                }
+                            }
+                )
+            }
+        }.frame(height: CGFloat(viewModel.binding.isCalendarViewHeight))
+        .padding(.bottom, 10)
+        .onChange(of: viewModel.output.isCurrentMonthDate) { _ in
+            withAnimation {
+                viewModel.input.toCalendarViewHeightChanged.send()
             }
         }
-        .padding(.horizontal, 10)
     }
     
-    var todoView: some View {
-        VStack {
-            if viewModel.binding.isTodoCount != 0 {
-                List {
-                    ForEach(0..<viewModel.binding.isTodoCount + 1) { index in
-                        HStack {
-                            Text("")
-                            
-                        }.listRowBackground((index  % 2 == 0) ? Color(.systemBlue) : Color(.white))
-                        
-                        if index == viewModel.binding.isTodoCount {
-                            HStack {
-                                Spacer()
-                                
-                                Button(action: {
-                                    viewModel.input.toEntryTodoViewButtonTapped.send()
-                                }, label: {
-                                    Text("＋")
-                                        .font(.system(size: 30, weight: .regular, design: .default))
-                                        .frame(width: 40, height: 40)
-                                        .foregroundColor(Color(.white))
-                                        .background(Color("Primary"))
-                                        .cornerRadius(40)
-                                }).frame(width: 40, height: 40)
-                                
-                                Spacer()
-                            }
-                        }
-                    }
-                }
-            } else {
-                VStack {
-                    Spacer()
+    var todoToolBarView: some View {
+        HStack {
+            Text("ToDo")
+                .font(.system(size: 20, weight: .bold, design: .default))
+                .foregroundColor(ColorComponents.primary)
+            
+            Spacer()
+            
+            NavigationLink(destination: CreateToDoView(viewModel: CreateToDoViewModel(viewModel.output.isSelectedDate))            .environmentObject(HomeViewModel())) {
+                Image(systemName: "pencil")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                    .foregroundColor(ColorComponents.primary)
+            }.navigationTitle("スケジュール")
+            .navigationBarTitleDisplayMode(.inline)
+        }.frame(height: 30)
+        .padding(.vertical, 6)
+    }
+    
+    var validTodoListView: some View {
+        List {
+            ForEach(0..<viewModel.binding.isTodoCount + 1) { index in
+                HStack {
+                    Text("")
                     
+                }.listRowBackground((index % 2 == 0) ? ColorComponents.white245 : .white)
+                
+                if index == viewModel.binding.isTodoCount {
                     HStack {
                         Spacer()
                         
                         Button(action: {
-                            viewModel.input.toEntryTodoViewButtonTapped.send()
+                            viewModel.input.toCreateToDoViewButtonTapped.send()
                         }, label: {
-                            Text("＋")
-                                .font(.system(size: 30, weight: .regular, design: .default))
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(Color(.white))
-                                .background(Color("Primary"))
-                                .cornerRadius(40)
-                        }).frame(width: 40, height: 40)
+                            Image(systemName: "pencil")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(ColorComponents.primary)
+                        }).sheet(isPresented: $viewModel.binding.isActiveCreateToDoView) {
+                            CreateToDoView(viewModel: CreateToDoViewModel(viewModel.output.isSelectedDate))
+                        }
                         
                         Spacer()
                     }
-                    Spacer()
-                    
                 }
             }
+        }
+    }
+    
+    var invalidTodoListView: some View {
+        VStack(alignment: .center) {
+            Spacer()
+            Text("予定がありません。")
+                .font(.system(size: 16, weight: .regular, design: .default))
+                .foregroundColor(ColorComponents.primary)
+            Spacer()
         }
     }
 }
@@ -214,25 +288,25 @@ extension HomeView_Previews {
             var toNextMonthActioned: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
             var toLastMonthActioned: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
             
+            var toColumnSelected: PassthroughSubject<String, Never> = PassthroughSubject<String, Never>()
+            var toDateSelected: PassthroughSubject<Int, Never> = PassthroughSubject<Int, Never>()
+            
             var toScrollOffsetChanged: PassthroughSubject<Double, Never> = PassthroughSubject<Double, Never>()
             var toRePositionScrollOffsetChanged: PassthroughSubject<Double, Never> = PassthroughSubject<Double, Never>()
-
             var toCalendarViewHeightChanged: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
-
-            var toEntryTodoViewButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+            
+            var toCreateToDoViewButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         }
         
         final class Binding: HomeViewModelBindingObject {
-            @Published var isYearAndMonthString: String = ""
-            @Published var isNowMonthString: String = ""
-            @Published var isWeekArray: [String] = []
             @Published var isWhatMonth: Int = 0
-            @Published var isWhatToday: Int = 0
-            @Published var isLatestMonthArray: [Int] = []
+            
+            @Published var isSelectedColumn: String = UUID().uuidString
             
             @Published var isCalendarViewHeight: Int = 0
             @Published var isScrollOffset: Double = 0.0
-
+            
+            @Published var isActiveCreateToDoView: Bool = false
             @Published var isTodoCount: Int = 0
             
             @Published var isLoading: Bool = false
@@ -240,7 +314,11 @@ extension HomeView_Previews {
         }
         
         final class Output: HomeViewModelOutputObject {
-            @Published var lastMonthArray: Array<Int> = []
+            @Published var isWeekArray: [String] = ["日","月","火","水","木","金","土"]
+            @Published var isSelectedDate: Date = Date()
+            @Published var isCurrentYearInt: Int = 0
+            @Published var isCurrentMonthInt: Int = 0
+            @Published var isCurrentMonthDate: [CurrentMonthDate] = []
         }
         
         var input: Input
