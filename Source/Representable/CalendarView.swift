@@ -9,18 +9,22 @@ import SwiftUI
 
 struct CalendarView: UIViewRepresentable {
     @Binding var latestMonthArray: [Int]
-    
-    init(_ latestMonthArray: Binding<[Int]>) {
+    @Binding var selectedDay: Int
+
+    init(_ latestMonthArray: Binding<[Int]>, _ selectedDay: Binding<Int>) {
         self._latestMonthArray = latestMonthArray
+        self._selectedDay = selectedDay
     }
     
     class Coordinator: NSObject, UICollectionViewDelegate, UICollectionViewDataSource {
         var selectedCellStore = 0
         
         @Binding var latestMonthArray: [Int]
-        
-        init(_ latestMonthArray: Binding<[Int]>) {
+        @Binding var selectedDay: Int
+
+        init(_ latestMonthArray: Binding<[Int]>, _ selectedDay: Binding<Int>) {
             self._latestMonthArray = latestMonthArray
+            self._selectedDay = selectedDay
         }
         
         func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -42,9 +46,9 @@ struct CalendarView: UIViewRepresentable {
             default :
                 cell.customView?.rootView = Text("\(latestMonthArray[indexPath.item])").foregroundColor(.gray)
                 cell.bottomBorder.frame = CGRect(x: 0,
-                                                 y: cell.contentView.frame.height - 1,
+                                                 y: cell.contentView.frame.height - 0.5,
                                                  width: cell.contentView.frame.width,
-                                                 height: 1)
+                                                 height: 0.5)
                 cell.bottomBorder.backgroundColor = UIColor(named: "Gray200")!.cgColor
                 cell.contentView.layer.addSublayer(cell.bottomBorder)
                 
@@ -72,12 +76,14 @@ struct CalendarView: UIViewRepresentable {
                         cell.selectedBackgroundView = selectedBackGroundView
                     }
                 })
+                
+                selectedDay = latestMonthArray[indexPath.item]
             }
         }
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator($latestMonthArray)
+        Coordinator($latestMonthArray, $selectedDay)
     }
     
     func makeUIView(context: UIViewRepresentableContext<CalendarView>) -> UICollectionView {
