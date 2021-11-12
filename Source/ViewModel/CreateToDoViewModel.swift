@@ -25,7 +25,8 @@ protocol CreateToDoViewModelInputObject: InputObject {
 // MARK: - CreateToDoViewModelObjectBindingObject
 protocol CreateToDoViewModelBindingObject: BindingObject {
     var isEntryTitleTextField: String { get set }
-    var isSectionDate: Date { get set }
+    var isSelectionDate: Date { get set }
+    var isSelectionTime: Date { get set }
     var isEntryNoteTextField: String { get set }
 }
 
@@ -42,7 +43,8 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
 
     final class Binding: CreateToDoViewModelBindingObject {
         @Published var isEntryTitleTextField: String = ""
-        @Published var isSectionDate: Date = Date()
+        @Published var isSelectionDate: Date = Date()
+        @Published var isSelectionTime: Date = Date()
         @Published var isEntryNoteTextField: String = ""
     }
     
@@ -58,23 +60,57 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
     
     private var cancellables: [AnyCancellable] = []
     
-    init() {
+    let date: Date
+    let calendar: Calendar
+    let dateFormatter: DateFormatter
+
+    init(_ selectedDate: Date) {
         input = Input()
         binding = Binding()
         output = Output()
         self.ref = Database.database().reference()
-                
+
+        self.binding.isSelectionDate = selectedDate
+        
+        date = Date()
+        calendar = Calendar(identifier: .gregorian)
+        dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
+        
         input.toEntryTitleTextField
             .sink(receiveValue: { [weak self] value in
-            
+                self?.binding.isEntryTitleTextField = value
             })
             .store(in: &cancellables)
         
         input.toEntryNoteTextField
             .sink(receiveValue: { [weak self] value in
-            
+                self?.binding.isEntryNoteTextField = value
             })
             .store(in: &cancellables)
 
+        input.toSaveButtonTapped
+            .sink(receiveCompletion: { [weak self] comp in
+                
+            }, receiveValue: { [weak self] value in
+                
+            })
+    }
+    
+    deinit {
+        self.binding.isEntryTitleTextField = ""
+        self.binding.isEntryNoteTextField = ""
+    }
+    
+    private func ratioSelectionTime() {
+        
+        // 現在の「日付け」より大きいなら、時間は24時間指定できるようにする
+        if binding.isSelectionDate > Date() {
+            binding.isSelectionTime = Date().fixed()
+        } else if binding.isSelectionDate < Date() {
+            
+        } else if binding.isSelectionDate == Date() {
+            
+        }
     }
 }
