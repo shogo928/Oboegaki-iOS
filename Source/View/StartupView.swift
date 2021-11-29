@@ -22,10 +22,15 @@ struct StartupView<T>: View where T: StartupViewModelObject {
             animationView
                 .fullScreenCover(isPresented: $viewModel.binding.isLoading,
                                  onDismiss: { viewModel.input.toLoadingStarted.send() }) {
+                    
                 if viewModel.binding.isFirebaseAuth {
+                    
                     TabBarView()
+                    
                 } else {
+                    
                     LoginView(viewModel: LoginViewModel(viewModel.binding.isFirebaseAuth)).edgesIgnoringSafeArea(.all)
+                    
                 }
             }
         }

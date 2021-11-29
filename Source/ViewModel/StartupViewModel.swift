@@ -54,7 +54,6 @@ class StartupViewModel: StartupViewModelObject {
     
     private var ref: DatabaseReference!
     
-    
     private var cancellables: [AnyCancellable] = []
     
     init() {
@@ -79,10 +78,16 @@ class StartupViewModel: StartupViewModelObject {
     }
     
     private func checkLogin() {
+        
         if Auth.auth().currentUser != nil {
+            
             self.binding.isFirebaseAuth = true
+            
         } else {
+            
             self.binding.isFirebaseAuth = false
+            
         }
+        
     }
 }
