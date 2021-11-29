@@ -19,6 +19,7 @@ protocol CreateToDoViewModelObject: ViewModelObject where Input: CreateToDoViewM
 protocol CreateToDoViewModelInputObject: InputObject {
     var toEntryTitleTextField: PassthroughSubject<String, Never> { get }
     var toEntryNoteTextField: PassthroughSubject<String, Never> { get }
+    var toSelectionDateChanged: PassthroughSubject<Date, Never> { get }
     var toSaveButtonTapped: PassthroughSubject<Void, Never> { get }
 }
 
@@ -28,16 +29,21 @@ protocol CreateToDoViewModelBindingObject: BindingObject {
     var isSelectionDate: Date { get set }
     var isSelectionTime: Date { get set }
     var isEntryNoteTextField: String { get set }
+    var isShowingAlert: Bool { get set }
+    var isLoading: Bool { get set }
 }
 
 // MARK: - CreateToDoViewModelOutputObject
-protocol CreateToDoViewModelOutputObject: OutputObject {}
+protocol CreateToDoViewModelOutputObject: OutputObject {
+    var isPickerDateRange: Date { get set }
+}
 
 // MARK: - CreateToDoViewModel
 class CreateToDoViewModel: CreateToDoViewModelObject {
     final class Input: CreateToDoViewModelInputObject {
         var toEntryTitleTextField: PassthroughSubject<String, Never> = PassthroughSubject<String, Never>()
         var toEntryNoteTextField: PassthroughSubject<String, Never> = PassthroughSubject<String, Never>()
+        var toSelectionDateChanged: PassthroughSubject<Date, Never> = PassthroughSubject<Date, Never>()
         var toSaveButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
     }
 
@@ -46,9 +52,13 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
         @Published var isSelectionDate: Date = Date()
         @Published var isSelectionTime: Date = Date()
         @Published var isEntryNoteTextField: String = ""
+        @Published var isShowingAlert: Bool = false
+        @Published var isLoading: Bool = false
     }
     
-    final class Output: CreateToDoViewModelOutputObject {}
+    final class Output: CreateToDoViewModelOutputObject {
+        @Published var isPickerDateRange: Date = Date()
+    }
     
     var input: Input
     
@@ -70,13 +80,15 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
         output = Output()
         self.ref = Database.database().reference()
 
-        self.binding.isSelectionDate = selectedDate
-        
         date = Date()
         calendar = Calendar(identifier: .gregorian)
         dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .short
-        
+        dateFormatter.locale = Locale(identifier: "ja_JP")
+        dateFormatter.dateStyle = .medium
+
+        self.binding.isSelectionDate = selectedDate
+        self.ratioSelectionDate(selectedDate: selectedDate)
+
         input.toEntryTitleTextField
             .sink(receiveValue: { [weak self] value in
                 self?.binding.isEntryTitleTextField = value
@@ -88,13 +100,20 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
                 self?.binding.isEntryNoteTextField = value
             })
             .store(in: &cancellables)
-
-        input.toSaveButtonTapped
-            .sink(receiveCompletion: { [weak self] comp in
-                
-            }, receiveValue: { [weak self] value in
-                
+        
+        input.toSelectionDateChanged
+            .sink(receiveValue: { [weak self] value in
+                self?.ratioSelectionDate(selectedDate: value)
             })
+            .store(in: &cancellables)
+        
+        input.toSaveButtonTapped
+            .sink(receiveValue: { [weak self] _ in
+                if let now = self?.date {
+                    self?.savwButtonAction(now: now)
+                }
+            })
+            .store(in: &cancellables)
     }
     
     deinit {
@@ -102,14 +121,36 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
         self.binding.isEntryNoteTextField = ""
     }
     
-    private func ratioSelectionTime() {
-        
-        // 現在の「日付け」より大きいなら、時間は24時間指定できるようにする
-        if binding.isSelectionDate > Date() {
-            binding.isSelectionTime = Date().fixed()
-        } else if binding.isSelectionDate < Date() {
+    private func ratioSelectionDate(selectedDate: Date) {
+        if selectedDate.zeroTime == date.zeroTime {
+            output.isPickerDateRange = date
+        } else {
+            output.isPickerDateRange = selectedDate.fixed(hour: 0, minute: 0, second: 0)
+        }
+    }
+    
+    private func savwButtonAction(now: Date) {
+        if self.binding.isSelectionTime.compare(now) == .orderedAscending {
             
-        } else if binding.isSelectionDate == Date() {
+            // 現時刻より前
+            
+            self.binding.isShowingAlert.toggle()
+            
+        } else if self.binding.isSelectionTime.compare(now) == .orderedDescending {
+            let user = Auth.auth().currentUser
+                
+                let todoList: [String: Any] = ["completed": false,
+                                               "title": "\(self.binding.isEntryTitleTextField)",
+                                               "note": "\(self.binding.isEntryNoteTextField)",
+                                               "scheduleDate": "",
+                                               "createdDate": "\(self.date)"]
+                   
+            self.ref.child("user_info/\(user)/todo_list").setValue(todoList)
+
+                // 現時刻より後
+                
+                self.binding.isLoading = true
+
             
         }
     }
