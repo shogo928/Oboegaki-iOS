@@ -33,12 +33,8 @@ struct HomeView<T>: View where T: HomeViewModelObject {
                         
                         weekView
                         
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(ColorComponents.gray100)
-                            .cornerRadius(24)
-                            .padding(.bottom, 10)
-                        
+                        Divider().background(ColorComponents.gray100)
+
                         calendarView
                         
                     }.padding(.horizontal, 10)
@@ -50,11 +46,8 @@ struct HomeView<T>: View where T: HomeViewModelObject {
                     VStack(spacing: 0) {
                         todoToolBarView
                         
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(ColorComponents.gray100)
-                            .cornerRadius(24)
-                        
+                        Divider().background(ColorComponents.gray100)
+
                         if viewModel.binding.isTodoCount != 0 {
                             validTodoListView
                         } else {
@@ -125,7 +118,6 @@ extension HomeView {
                 }
             }
         }.frame(height: 25)
-        
     }
     
     var calendarView: some View {
@@ -143,10 +135,7 @@ extension HomeView {
                                         .font(.system(size: 14, weight: .light, design: .default))
                                         .foregroundColor(Color(viewModel.binding.isSelectedColumn == currentMonthDate.id ? .white : UIColor(ColorComponents.gray50)))
                                     
-                                    Rectangle()
-                                        .frame(height: 0.5)
-                                        .foregroundColor(ColorComponents.gray150)
-                                        .cornerRadius(24)
+                                    Divider().background(ColorComponents.gray200)
                                 }.background(
                                     Color(viewModel.binding.isSelectedColumn == currentMonthDate.id ? UIColor(ColorComponents.primary) : .clear)
                                         .cornerRadius(9)
@@ -206,7 +195,7 @@ extension HomeView {
                 )
             }
         }.frame(height: CGFloat(viewModel.binding.isCalendarViewHeight))
-        .padding(.bottom, 10)
+        .padding(.vertical, 10)
         .onChange(of: viewModel.output.isCurrentMonthDate) { _ in
             withAnimation {
                 viewModel.input.toCalendarViewHeightChanged.send()
