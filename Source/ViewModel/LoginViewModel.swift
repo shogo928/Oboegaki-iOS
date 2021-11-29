@@ -24,8 +24,11 @@ protocol LoginViewModelInputObject: InputObject {
     var toTermsOfServiceButtonTapped: PassthroughSubject<Void, Never> { get }
     var toPrivacyPolicyButtonTapped: PassthroughSubject<Void, Never> { get }
     
+    var toSignInWithAnonymouslyButtonTapped: PassthroughSubject<Void, Never> { get }
     var toSignInWithAppleButtonTapped: PassthroughSubject<Void, Never> { get }
     var toSignInWithGoogleButtonTapped: PassthroughSubject<Void, Never> { get }
+    
+    var toReWrithButtonTapped: PassthroughSubject<Void, Never> { get }
 }
 
 // MARK: - LoginViewModelObjectBindingObject
@@ -38,12 +41,15 @@ protocol LoginViewModelBindingObject: BindingObject {
     var isEntryPasswordShowFlag: Bool { get set }
     
     var isSignInStatus: Bool { get set }
-    var isSignInStatusMessege: String { get set }
-    var isSignInStatusMessegeColorFlag: Bool { get set }
+    
+    var isScrollOffsetFlag: Bool { get set }
 }
 
 // MARK: - LoginViewModelOutputObject
-protocol LoginViewModelOutputObject: OutputObject {}
+protocol LoginViewModelOutputObject: OutputObject {
+    var isSignInErrorMessege: String { get set }
+    var isSignInResultMessege: String { get set }
+}
 
 // MARK: - LoginViewModel
 class LoginViewModel: LoginViewModelObject {
@@ -55,8 +61,11 @@ class LoginViewModel: LoginViewModelObject {
         var toTermsOfServiceButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         var toPrivacyPolicyButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         
+        var toSignInWithAnonymouslyButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         var toSignInWithAppleButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         var toSignInWithGoogleButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+        
+        var toReWrithButtonTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
     }
     
     final class Binding: LoginViewModelBindingObject {
@@ -68,11 +77,14 @@ class LoginViewModel: LoginViewModelObject {
         @Published var isEntryPasswordShowFlag: Bool = false
         
         @Published var isSignInStatus: Bool = false
-        @Published var isSignInStatusMessege: String = ""
-        @Published var isSignInStatusMessegeColorFlag: Bool = false
+        
+        @Published var isScrollOffsetFlag: Bool = false
     }
     
-    final class Output: LoginViewModelOutputObject {}
+    final class Output: LoginViewModelOutputObject {
+        @Published var isSignInErrorMessege: String = ""
+        @Published var isSignInResultMessege: String = ""
+    }
     
     var input: Input
     
@@ -80,12 +92,16 @@ class LoginViewModel: LoginViewModelObject {
     
     var output: Output
     
+    private var ref: DatabaseReference!
+    
     private var cancellables: [AnyCancellable] = []
     
     init(_ isFirebaseAuth: Bool) {
         input = Input()
         binding = Binding()
         output = Output()
+        self.ref = Database.database().reference()
+        Auth.auth().languageCode = "ja_JP"
         
         if isFirebaseAuth {
             
@@ -109,8 +125,8 @@ class LoginViewModel: LoginViewModelObject {
         
         input.toLoginButtonTapped
             .sink(receiveValue: { [weak self] in
-                self?.registerAccount(email: self?.binding.isEntryEmailTextField,
-                                      password: self?.binding.isEntryPasswordTextField)
+                self?.createEmailAccount(email: self?.binding.isEntryEmailTextField,
+                                         password: self?.binding.isEntryPasswordTextField)
             })
             .store(in: &cancellables)
         
@@ -119,66 +135,150 @@ class LoginViewModel: LoginViewModelObject {
                 self?.binding.isTermsOfServiceSheetFlag.toggle()
             })
             .store(in: &cancellables)
-
+        
         input.toPrivacyPolicyButtonTapped
             .sink(receiveValue: { [weak self] in
                 self?.binding.isPrivacyPolicySheetFlag.toggle()
             })
             .store(in: &cancellables)
+        
+        input.toSignInWithAnonymouslyButtonTapped
+            .sink(receiveValue: { [weak self] in
+                
+            })
+            .store(in: &cancellables)
+        
+        input.toReWrithButtonTapped
+            .sink(receiveValue: { [weak self] in
+                self?.binding.isScrollOffsetFlag = false
+                self?.binding.isEntryEmailTextField = ""
+                self?.binding.isEntryPasswordTextField = ""
+            })
+            .store(in: &cancellables)
     }
     
-    private func registerAccount(email: String?, password: String?) {
-        if let email = email,
-           let password = password {
-            if password.trimmingCharacters(in: .whitespacesAndNewlines).count >= 8 {
-                Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-                    if let user = authResult?.user {
-                        user.sendEmailVerification(completion: { error in
-                            if error == nil {
-                                print("send mail success.")
-                            }
-                        })
-                        self.binding.isSignInStatusMessege = "ログイン完了"
-                        self.binding.isSignInStatusMessegeColorFlag = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            self.binding.isSignInStatus = true
-                        }
-                    }
-                    
-                    if let error = error as NSError?, let errorCode = AuthErrorCode(rawValue: error.code) {
-                        switch errorCode {
-                        case .invalidEmail:
-                            self.binding.isSignInStatusMessege = "メールアドレスの形式が正しくありません"
-                            self.binding.isSignInStatusMessegeColorFlag = false
-                        case .emailAlreadyInUse:
-                            print("このメールアドレスは既に登録されています")
+    
+    
+    private func createEmailAccount(email: String?, password: String?) {
+        
+        guard let email = email,
+              let password = password else {
+            return
+        }
+        
+        if password.trimmingCharacters(in: .whitespacesAndNewlines).count >= 8 {
+            
+            Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+                
+                // User Registration Process
+                
+                if let user = authResult?.user {
+                    user.sendEmailVerification(completion: { error in
+                        
+                        if error == nil {
+                            self.binding.isScrollOffsetFlag = true
                             
-                            Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-                                if let user = authResult?.user {
+                            var timerStore: AnyCancellable!
+                            timerStore = Timer.publish(every: 1.0, on: .main, in: .common)
+                                .autoconnect()
+                                .receive(on: DispatchQueue.main)
+                                .sink(receiveValue: { [weak self] _ in
+                                    
+                                    user.reload()
+                                    
                                     if user.isEmailVerified {
-                                        self.binding.isSignInStatusMessege = "ログイン完了"
-                                        self.binding.isSignInStatusMessegeColorFlag = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                            self.binding.isSignInStatus = true
-                                        }
-                                    } else {
-                                        self.binding.isSignInStatusMessege = "メールボックスを確認してください"
+                                        
+                                        self?.output.isSignInResultMessege = "アドレスが確認出来ました"
+                                        
+                                        self?.binding.isSignInStatus = true
+                                        
+                                        timerStore.cancel()
                                     }
-                                }
-                            }
-                        case .weakPassword:
-                            print("パスワードは６文字以上で入力してください")
-                        default:
-                            print("その他のエラー")
+                                    
+                                })
+                            
                         }
-                    } else {
-                        print("ユーザー登録成功")
+                        
+                    })
+                }
+                
+                
+                
+                // User Registration Failure
+                
+                if let error = error as NSError?, let errorCode = AuthErrorCode(rawValue: error.code) {
+                    
+                    switch errorCode {
+                    
+                    case .invalidEmail:
+                        self.output.isSignInErrorMessege = "メールアドレスの形式が正しくありません"
+                        
+                    case .emailAlreadyInUse:
+                        self.loginEmailAccount(email: email, password: password)
+                        
+                    default:
+                        print("その他のエラー")
                     }
                 }
-            } else {
-                self.binding.isSignInStatusMessege = "8〜16文字のパスワードにする必要があります"
-                self.binding.isSignInStatusMessegeColorFlag = false
+                
             }
+            
+        } else {
+            self.output.isSignInErrorMessege = "8〜16文字のパスワードにする必要があります"
+            
         }
+    }
+    
+    
+    
+    private func loginEmailAccount(email: String, password: String) {
+        
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            
+            // User SignIn Process
+            
+            if let user = authResult?.user {
+                
+                if user.isEmailVerified {
+                    self.output.isSignInResultMessege = "ログインに成功しました"
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        self.binding.isSignInStatus = true
+                        
+                    }
+                    
+                } else {
+                    
+                }
+                
+            }
+            
+            
+            
+            // User SignIn Error
+            
+            if let error = error as NSError?, let errorCode = AuthErrorCode(rawValue: error.code) {
+                
+                switch errorCode {
+                
+                case .userNotFound, .wrongPassword:
+                    self.output.isSignInErrorMessege = "メールアドレス、またはパスワードが間違っています"
+                    
+                case .userDisabled:
+                    self.output.isSignInErrorMessege = "このユーザーアカウントは無効化されています"
+                    
+                default:
+                    self.output.isSignInErrorMessege = error.domain
+                }
+                
+            }
+            
+        }
+    }
+    
+    
+    
+    private func registerAnonymouslyAccount() {
+        
     }
 }
