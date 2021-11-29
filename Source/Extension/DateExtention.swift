@@ -16,6 +16,10 @@ extension Locale {
 }
 
 extension Date {
+    var zeroTime: Date {
+        return fixed(hour: 0, minute: 0, second: 0)
+    }
+    
     var calendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = .japan
@@ -32,7 +36,8 @@ extension Date {
         comp.day    = day    ?? calendar.component(.day,    from: self)
         comp.hour   = hour   ?? calendar.component(.hour,   from: self)
         comp.minute = minute ?? calendar.component(.minute, from: self)
-        
+        comp.second = second ?? calendar.component(.second, from: self)
+
         return calendar.date(from: comp)!
     }
     
