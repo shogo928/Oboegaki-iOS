@@ -41,7 +41,7 @@ extension PrivacyPolicyView {
                 .foregroundColor(Color("Gray100"))
                 .cornerRadius(24)
             Spacer()
-            Text("利用規約")
+            Text("プライバシーポリシー")
                 .font(.system(size: 30, weight: .black, design: .default))
                 .foregroundColor(Color("Gray100"))
                 .lineLimit(1)
