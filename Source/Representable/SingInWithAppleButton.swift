@@ -18,11 +18,18 @@ struct SignInWithAppleButton: UIViewRepresentable {
     }
     
     class Coordinator: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
-        @State var currentNonce: String?
+        var currentNonce: String?
         @Binding var signInFlag: Bool
-
+        
+        private var ref: DatabaseReference!
+        
         init(signInFlag: Binding<Bool>) {
             self._signInFlag = signInFlag
+            self.ref = Database.database().reference()
+        }
+        
+        @objc func appleSignInButtonTapped(_: Any) {
+            startSignInWithAppleFlow()
         }
         
         private func randomNonceString(length: Int = 32) -> String {
@@ -68,7 +75,7 @@ struct SignInWithAppleButton: UIViewRepresentable {
         }
         
         @available(iOS 13, *)
-        @objc func startSignInWithAppleFlow() {
+        func startSignInWithAppleFlow() {
             let nonce = randomNonceString()
             currentNonce = nonce
             let appleIDProvider = ASAuthorizationAppleIDProvider()
@@ -91,31 +98,45 @@ struct SignInWithAppleButton: UIViewRepresentable {
         
         func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
             if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+                
                 guard let nonce = currentNonce else {
                     fatalError("Invalid state: A login callback was received, but no login request was sent.")
                 }
+                
                 guard let appleIDToken = appleIDCredential.identityToken else {
                     print("Unable to fetch identity token")
                     return
                 }
+                
                 guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
                     print("Unable to serialise token string from data: \(appleIDToken.debugDescription)")
                     return
                 }
+                
                 let credential = OAuthProvider.credential(
                     withProviderID: "apple.com",
                     idToken: idTokenString,
                     rawNonce: nonce
                 )
+                
                 Auth.auth().signIn(with: credential) { [weak self] (authResult, error) in
+                    
                     if let error = error {
+                        
                         print(error.localizedDescription)
+                        
                         return
+                        
                     }
                     
-                    if authResult?.user != nil {
+                    if let user = authResult?.user {
+                        
+                        self?.ref.child("user_info/user/").setValue(["uuid": user.uid])
+                        
                         self?.signInFlag.toggle()
+                        
                         return
+                        
                     }
                 }
             }
@@ -137,7 +158,7 @@ struct SignInWithAppleButton: UIViewRepresentable {
         )
         
         appleLoginButton.addTarget(context.coordinator,
-                                   action: #selector(Coordinator.startSignInWithAppleFlow),
+                                   action: #selector(Coordinator.appleSignInButtonTapped(_:)),
                                    for: .touchUpInside)
         return appleLoginButton
     }
