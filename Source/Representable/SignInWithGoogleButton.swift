@@ -19,8 +19,11 @@ struct SignInWithGoogleButton: UIViewRepresentable {
     class Coordinator: NSObject {
         @Binding var signInFlag: Bool
         
+        private var ref: DatabaseReference!
+
         init(signInFlag: Binding<Bool>) {
             self._signInFlag = signInFlag
+            self.ref = Database.database().reference()
         }
         
         @objc func startSignInWithGoogleFlow() {
@@ -46,14 +49,23 @@ struct SignInWithGoogleButton: UIViewRepresentable {
                                                                accessToken: authentication.accessToken)
                 
                 Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+                    
                     if let error = error {
+                        
                         print(error.localizedDescription)
+                        
                         return
+                        
                     }
                     
-                    if authResult?.user != nil {
+                    if let user = authResult?.user {
+
+                        self?.ref.child("user_info/user/").setValue(["uuid": user.uid])
+                        
                         self?.signInFlag.toggle()
+                        
                         return
+                        
                     }
                 }
             }
