@@ -145,7 +145,7 @@ struct LoginView<T>: View where T: LoginViewModelObject {
                             
                             Spacer()
                             
-                            Text("メールを送信しました\n送付先：\(viewModel.binding.isEntryEmailTextField)\nメールボックスを確認してください")
+                            Text("メールを送信しました\nメールボックスを確認してください\n送付先：\n\(viewModel.binding.isEntryEmailTextField)")
                                 .font(.system(size: 16, weight: .bold, design: .default))
                                 .foregroundColor(.white)
                             
@@ -319,6 +319,7 @@ extension LoginView {
                 .font(.system(size: 16, weight: .light, design: .default))
                 .foregroundColor(ColorComponents.gray100)
                 .lineLimit(1)
+                .minimumScaleFactor(0.5)
                 .frame(width: 140)
             
             Rectangle()
