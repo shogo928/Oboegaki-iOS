@@ -71,7 +71,7 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
     private var cancellables: [AnyCancellable] = []
     
     let date: Date
-    let calendar: Calendar
+    var calendar: Calendar
     let dateFormatter: DateFormatter
 
     init(_ selectedDate: Date) {
@@ -81,10 +81,15 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
         self.ref = Database.database().reference()
 
         date = Date()
+        
         calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+        calendar.locale   = Locale(identifier: "ja_JP")
+        
         dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ja_JP")
         dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
 
         self.binding.isSelectionDate = selectedDate
         self.ratioSelectionDate(selectedDate: selectedDate)
@@ -109,9 +114,7 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
         
         input.toSaveButtonTapped
             .sink(receiveValue: { [weak self] _ in
-                if let now = self?.date {
-                    self?.savwButtonAction(now: now)
-                }
+                    self?.saveButtonAction()
             })
             .store(in: &cancellables)
     }
@@ -122,36 +125,46 @@ class CreateToDoViewModel: CreateToDoViewModelObject {
     }
     
     private func ratioSelectionDate(selectedDate: Date) {
-        if selectedDate.zeroTime == date.zeroTime {
-            output.isPickerDateRange = date
+        
+        if selectedDate.zeroTime == Date().zeroTime {
+            
+            self.binding.isSelectionTime = Date()
+            self.output.isPickerDateRange = Date()
+
         } else {
-            output.isPickerDateRange = selectedDate.fixed(hour: 0, minute: 0, second: 0)
+            
+            self.binding.isSelectionTime = selectedDate.fixed(hour: 0, minute: 0, second: 0)
+            self.output.isPickerDateRange = selectedDate.fixed(hour: 0, minute: 0, second: 0)
+            
         }
+        
     }
     
-    private func savwButtonAction(now: Date) {
-        if self.binding.isSelectionTime.compare(now) == .orderedAscending {
-            
-            // 現時刻より前
+    private func saveButtonAction() {
+        if self.binding.isSelectionTime < Date() {
             
             self.binding.isShowingAlert.toggle()
             
-        } else if self.binding.isSelectionTime.compare(now) == .orderedDescending {
-            let user = Auth.auth().currentUser
-                
-                let todoList: [String: Any] = ["completed": false,
-                                               "title": "\(self.binding.isEntryTitleTextField)",
-                                               "note": "\(self.binding.isEntryNoteTextField)",
-                                               "scheduleDate": "",
-                                               "createdDate": "\(self.date)"]
-                   
-            self.ref.child("user_info/\(user)/todo_list").setValue(todoList)
+        } else if self.binding.isSelectionTime >= Date() {
+            
+            guard let user = Auth.auth().currentUser else { return }
+            
+            let createdDate = self.date.now()
+            
+            self.ref.child("user_info/user/\(user.uid)/todo_list/\(createdDate)")
+                .setValue([
+                    "completed": false,
+                    "title": "\(self.binding.isEntryTitleTextField)",
+                    "note": "\(self.binding.isEntryNoteTextField)",
+                    "scheduleDate": "\(self.binding.isSelectionTime)",
+                    "createdDate": "\(createdDate)"
+                ])
 
                 // 現時刻より後
                 
                 self.binding.isLoading = true
-
             
         }
+        
     }
 }
