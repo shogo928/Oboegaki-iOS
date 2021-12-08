@@ -100,7 +100,8 @@ class LoginViewModel: LoginViewModelObject {
         input = Input()
         binding = Binding()
         output = Output()
-        self.ref = Database.database().reference()
+        
+        ref = Database.database().reference()
         Auth.auth().languageCode = "ja_JP"
         
         if isFirebaseAuth {
@@ -144,7 +145,7 @@ class LoginViewModel: LoginViewModelObject {
         
         input.toSignInWithAnonymouslyButtonTapped
             .sink(receiveValue: { [weak self] in
-                
+                self?.registerAnonymouslyAccount()
             })
             .store(in: &cancellables)
         
@@ -173,9 +174,11 @@ class LoginViewModel: LoginViewModelObject {
                 // User Registration Process
                 
                 if let user = authResult?.user {
+                    
                     user.sendEmailVerification(completion: { error in
                         
                         if error == nil {
+                            
                             self.binding.isScrollOffsetFlag = true
                             
                             var timerStore: AnyCancellable!
@@ -188,11 +191,18 @@ class LoginViewModel: LoginViewModelObject {
                                     
                                     if user.isEmailVerified {
                                         
+                                        self?.ref.child("user_info/user/").setValue(["uuid": user.uid])
+
                                         self?.output.isSignInResultMessege = "アドレスが確認出来ました"
                                         
-                                        self?.binding.isSignInStatus = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                            
+                                            self?.binding.isSignInStatus = true
+                                            
+                                        }
                                         
                                         timerStore.cancel()
+                                        
                                     }
                                     
                                 })
@@ -200,8 +210,8 @@ class LoginViewModel: LoginViewModelObject {
                         }
                         
                     })
+                    
                 }
-                
                 
                 
                 // User Registration Failure
@@ -211,19 +221,24 @@ class LoginViewModel: LoginViewModelObject {
                     switch errorCode {
                     
                     case .invalidEmail:
+                        
                         self.output.isSignInErrorMessege = "メールアドレスの形式が正しくありません"
                         
                     case .emailAlreadyInUse:
+                        
                         self.loginEmailAccount(email: email, password: password)
                         
                     default:
+                        
                         print("その他のエラー")
+                        
                     }
                 }
                 
             }
             
         } else {
+            
             self.output.isSignInErrorMessege = "8〜16文字のパスワードにする必要があります"
             
         }
@@ -240,19 +255,58 @@ class LoginViewModel: LoginViewModelObject {
             if let user = authResult?.user {
                 
                 if user.isEmailVerified {
+                    
+                    self.ref.child("user_info/user/").setValue(["uuid": user.uid])
+
                     self.output.isSignInResultMessege = "ログインに成功しました"
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        
                         self.binding.isSignInStatus = true
                         
                     }
                     
                 } else {
                     
+                    user.sendEmailVerification(completion: { error in
+                        
+                        if error == nil {
+                            
+                            self.binding.isScrollOffsetFlag = true
+                            
+                            var timerStore: AnyCancellable!
+                            timerStore = Timer.publish(every: 1.0, on: .main, in: .common)
+                                .autoconnect()
+                                .receive(on: DispatchQueue.main)
+                                .sink(receiveValue: { [weak self] _ in
+                                    
+                                    user.reload()
+                                    
+                                    if user.isEmailVerified {
+                                        
+                                        self?.ref.child("user_info/user/").setValue(["uuid": user.uid])
+
+                                        self?.output.isSignInResultMessege = "アドレスが確認出来ました"
+                                        
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                            
+                                            self?.binding.isSignInStatus = true
+                                            
+                                        }
+                                        
+                                        timerStore.cancel()
+                                        
+                                    }
+                                    
+                                })
+                            
+                        }
+                        
+                    })
+                    
                 }
                 
             }
-            
             
             
             // User SignIn Error
@@ -262,13 +316,17 @@ class LoginViewModel: LoginViewModelObject {
                 switch errorCode {
                 
                 case .userNotFound, .wrongPassword:
+                    
                     self.output.isSignInErrorMessege = "メールアドレス、またはパスワードが間違っています"
                     
                 case .userDisabled:
+                    
                     self.output.isSignInErrorMessege = "このユーザーアカウントは無効化されています"
                     
                 default:
+                    
                     self.output.isSignInErrorMessege = error.domain
+                    
                 }
                 
             }
@@ -280,5 +338,36 @@ class LoginViewModel: LoginViewModelObject {
     
     private func registerAnonymouslyAccount() {
         
+        Auth.auth().signInAnonymously { authResult, error in
+            
+            // User SignIn Process
+            
+            if let user = authResult?.user {
+                
+                if user.isAnonymous {
+                    
+                    self.ref.child("user_info/user").child(user.uid).setValue(["uid": user.uid])
+                    
+                    self.binding.isSignInStatus = true
+                    
+                } else {
+                    
+                    self.output.isSignInErrorMessege = "ゲストログイン出来ませんでした"
+                    
+                }
+                
+            }
+            
+            
+            // User SignIn Error
+            
+            if let error = error as NSError? {
+                
+                self.output.isSignInErrorMessege = "\(error.localizedDescription)"
+                
+            }
+            
+        }
     }
+    
 }
