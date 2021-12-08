@@ -41,4 +41,17 @@ extension Date {
         return calendar.date(from: comp)!
     }
     
+    func now() -> Date {
+        let calendar = self.calendar
+        
+        var comp = DateComponents()
+        comp.year   = calendar.component(.year,   from: self)
+        comp.month  = calendar.component(.month,  from: self)
+        comp.day    = calendar.component(.day,    from: self)
+        comp.hour   = calendar.component(.hour,   from: self)
+        comp.minute = calendar.component(.minute, from: self)
+        comp.second = calendar.component(.second, from: self)
+
+        return calendar.date(from: comp)!
+    }
 }
