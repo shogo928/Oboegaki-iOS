@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CreateToDoView<T>: View where T: CreateToDoViewModelObject {
     @Environment(\.presentationMode) var presentationMode
-
+    
     @ObservedObject private var viewModel: T
     
     init(viewModel: T) {
@@ -19,40 +19,58 @@ struct CreateToDoView<T>: View where T: CreateToDoViewModelObject {
     
     var body: some View {
         ZStack {
+            
             ColorComponents.backGround246.edgesIgnoringSafeArea(.all)
             
             ScrollView(.vertical, showsIndicators: false) {
+                
                 VStack(alignment: .leading, spacing: 20) {
+                    
                     TitleText.padding(.top, 10)
+                    
                     TitleTextField
                     
                     DatePickerView
+                    
                     Divider().background(ColorComponents.gray200)
                     
                     TimePickerView
+                    
                     Divider().background(ColorComponents.gray200)
-
+                    
                     NoteText
+                    
                     NoteTextField
                     
                     SaveButton.padding(.bottom, 10)
+                    
                 }.padding(10)
                 
             }.background(Color(.white))
             .cornerRadius(16)
             .padding(10)
-        }.onTapGesture {
+            
+        }
+        
+        .onTapGesture {
+            
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            
         }
         
         .onChange(of: viewModel.binding.isLoading) { _ in
+            
             presentationMode.wrappedValue.dismiss()
+            
         }
         
         .alert(isPresented: $viewModel.binding.isShowingAlert) {
-                    Alert(title: Text("日時が不正です"),
-                          message: Text("未来の日時を設定して下さい"))
+            
+            Alert(title: Text("日時が不正です"),
+                  message: Text("未来の日時を設定して下さい"))
+            
         }
+        
     }
 }
 
@@ -69,8 +87,8 @@ extension CreateToDoView {
             .preferredColorScheme(.light)
             .autocapitalization(.none)
             .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(ColorComponents.gray200, lineWidth: 1.0)
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(ColorComponents.gray200, lineWidth: 1.0)
             )
             .onChange(of: viewModel.binding.isEntryTitleTextField) { _ in
                 viewModel.input.toEntryTitleTextField.send(viewModel.binding.isEntryTitleTextField)

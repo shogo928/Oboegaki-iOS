@@ -17,10 +17,13 @@ protocol LoginViewModelObject: ViewModelObject where Input: LoginViewModelInputO
 
 // MARK: - LoginViewModelObjectInputObject
 protocol LoginViewModelInputObject: InputObject {
-    var toPasswordTextFieldEntered: PassthroughSubject<String, Never> { get }
+    var toStartEmailTapped: PassthroughSubject<Void, Never> { get }
     
+    var toPasswordTextFieldEntered: PassthroughSubject<String, Never> { get }
     var toPasswordShowTextTapped: PassthroughSubject<Void, Never> { get }
+    
     var toLoginButtonTapped: PassthroughSubject<Void, Never> { get }
+    
     var toTermsOfServiceButtonTapped: PassthroughSubject<Void, Never> { get }
     var toPrivacyPolicyButtonTapped: PassthroughSubject<Void, Never> { get }
     
@@ -33,6 +36,8 @@ protocol LoginViewModelInputObject: InputObject {
 
 // MARK: - LoginViewModelObjectBindingObject
 protocol LoginViewModelBindingObject: BindingObject {
+    var isTabViewSelection: Int { get set }
+    
     var isTermsOfServiceSheetFlag: Bool { get set }
     var isPrivacyPolicySheetFlag: Bool { get set }
     
@@ -41,8 +46,6 @@ protocol LoginViewModelBindingObject: BindingObject {
     var isEntryPasswordShowFlag: Bool { get set }
     
     var isSignInStatus: Bool { get set }
-    
-    var isScrollOffsetFlag: Bool { get set }
 }
 
 // MARK: - LoginViewModelOutputObject
@@ -54,6 +57,8 @@ protocol LoginViewModelOutputObject: OutputObject {
 // MARK: - LoginViewModel
 class LoginViewModel: LoginViewModelObject {
     final class Input: LoginViewModelInputObject {
+        var toStartEmailTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
+        
         var toPasswordTextFieldEntered: PassthroughSubject<String, Never> = PassthroughSubject<String, Never>()
         
         var toPasswordShowTextTapped: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
@@ -69,6 +74,8 @@ class LoginViewModel: LoginViewModelObject {
     }
     
     final class Binding: LoginViewModelBindingObject {
+        @Published var isTabViewSelection: Int = 0
+        
         @Published var isTermsOfServiceSheetFlag: Bool = false
         @Published var isPrivacyPolicySheetFlag: Bool = false
         
@@ -77,8 +84,6 @@ class LoginViewModel: LoginViewModelObject {
         @Published var isEntryPasswordShowFlag: Bool = false
         
         @Published var isSignInStatus: Bool = false
-        
-        @Published var isScrollOffsetFlag: Bool = false
     }
     
     final class Output: LoginViewModelOutputObject {
@@ -96,7 +101,7 @@ class LoginViewModel: LoginViewModelObject {
     
     private var cancellables: [AnyCancellable] = []
     
-    init(_ isFirebaseAuth: Bool) {
+    init() {
         input = Input()
         binding = Binding()
         output = Output()
@@ -104,11 +109,11 @@ class LoginViewModel: LoginViewModelObject {
         ref = Database.database().reference()
         Auth.auth().languageCode = "ja_JP"
         
-        if isFirebaseAuth {
-            
-        } else {
-            
-        }
+        input.toStartEmailTapped
+            .sink(receiveValue: { [weak self] _ in
+                self?.binding.isTabViewSelection = 1
+            })
+            .store(in: &cancellables)
         
         input.toPasswordTextFieldEntered
             .sink(receiveValue: { [weak self] value in
@@ -151,7 +156,7 @@ class LoginViewModel: LoginViewModelObject {
         
         input.toReWrithButtonTapped
             .sink(receiveValue: { [weak self] in
-                self?.binding.isScrollOffsetFlag = false
+                self?.binding.isTabViewSelection = 1
                 self?.binding.isEntryEmailTextField = ""
                 self?.binding.isEntryPasswordTextField = ""
             })
@@ -179,7 +184,7 @@ class LoginViewModel: LoginViewModelObject {
                         
                         if error == nil {
                             
-                            self.binding.isScrollOffsetFlag = true
+                            self.binding.isTabViewSelection = 2
                             
                             var timerStore: AnyCancellable!
                             timerStore = Timer.publish(every: 1.0, on: .main, in: .common)
@@ -191,8 +196,8 @@ class LoginViewModel: LoginViewModelObject {
                                     
                                     if user.isEmailVerified {
                                         
-                                        self?.ref.child("user_info/user/").setValue(["uuid": user.uid])
-
+                                        self?.ref.child("user_info/users/\(user.uid)/").setValue(["thema_color": "default"])
+                                        
                                         self?.output.isSignInResultMessege = "アドレスが確認出来ました"
                                         
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -256,8 +261,8 @@ class LoginViewModel: LoginViewModelObject {
                 
                 if user.isEmailVerified {
                     
-                    self.ref.child("user_info/user/").setValue(["uuid": user.uid])
-
+                    self.ref.child("user_info/users/\(user.uid)/").setValue(["uuid": user.uid])
+                    
                     self.output.isSignInResultMessege = "ログインに成功しました"
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -272,7 +277,7 @@ class LoginViewModel: LoginViewModelObject {
                         
                         if error == nil {
                             
-                            self.binding.isScrollOffsetFlag = true
+                            self.binding.isTabViewSelection = 2
                             
                             var timerStore: AnyCancellable!
                             timerStore = Timer.publish(every: 1.0, on: .main, in: .common)
@@ -284,8 +289,8 @@ class LoginViewModel: LoginViewModelObject {
                                     
                                     if user.isEmailVerified {
                                         
-                                        self?.ref.child("user_info/user/").setValue(["uuid": user.uid])
-
+                                        self?.ref.child("user_info/users/\(user.uid)/").setValue(["uuid": user.uid])
+                                        
                                         self?.output.isSignInResultMessege = "アドレスが確認出来ました"
                                         
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -346,7 +351,7 @@ class LoginViewModel: LoginViewModelObject {
                 
                 if user.isAnonymous {
                     
-                    self.ref.child("user_info/user").child(user.uid).setValue(["uid": user.uid])
+                    self.ref.child("user_info/users/\(user.uid)/").setValue(["uid": user.uid])
                     
                     self.binding.isSignInStatus = true
                     

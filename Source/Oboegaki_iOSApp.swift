@@ -18,7 +18,7 @@ struct Oboegaki_iOSApp: App {
             
             let viewModel = StartupViewModel()
             
-            StartupView(viewModel: viewModel)
+            StartupView(viewModel: viewModel).ignoresSafeArea()
             
         }
         
@@ -29,18 +29,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
         
-        // ログアウト
-        let firebaseAuth = Auth.auth()
+        /*
+         let firebaseAuth = Auth.auth()
+         
+         do {
+             
+             try firebaseAuth.signOut()
+             
+         } catch let signOutError as NSError {
+             
+             print("Error signing out: %@", signOutError)
+             
+         }
         
-        do {
-            
-            try firebaseAuth.signOut()
-            
-        } catch let signOutError as NSError {
-            
-            print("Error signing out: %@", signOutError)
-            
-        }
+         */
+         
         
         return true
     }
