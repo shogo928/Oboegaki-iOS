@@ -15,19 +15,17 @@ struct TermsOfServiceView: View {
             Color(.white).edgesIgnoringSafeArea(.all)
             
             VStack {
+                
                 Spacer()
                 
-                TitllText
+                TitllText.padding(.bottom, 20)
                 
-                Spacer().frame(height:20)
+                infoTextScroll.padding(.bottom, 20)
                 
-                infoTextScroll.padding(.horizontal, 20)
+                backButton.padding(.bottom, 20)
                 
-                Spacer().frame(height:30)
+                Spacer()
                 
-                backButton
-                
-                Spacer().frame(height:40)
             }
         }
     }
@@ -36,27 +34,37 @@ struct TermsOfServiceView: View {
 extension TermsOfServiceView {
     var TitllText: some View {
         HStack {
+            
             Rectangle()
                 .frame(height: 1)
-                .foregroundColor(Color("Gray100"))
+                .foregroundColor(ColorComponents.gray100)
                 .cornerRadius(24)
+            
             Spacer()
+            
             Text("利用規約")
                 .font(.system(size: 30, weight: .black, design: .default))
-                .foregroundColor(Color("Gray100"))
+                .foregroundColor(ColorComponents.gray100)
                 .lineLimit(1)
-                .frame(width: 140)
+                .minimumScaleFactor(0.5)
+                .frame(width: 200)
+            
             Spacer()
+            
             Rectangle()
                 .frame(height: 1)
-                .foregroundColor(Color("Gray100"))
+                .foregroundColor(ColorComponents.gray100)
                 .cornerRadius(24)
+            
         }.padding(.horizontal, 20)
+        
     }
     
     var infoTextScroll: some View {
         GeometryReader { geometry in
+            
             ScrollView(.vertical, showsIndicators: true) {
+                
                 Text("""
                     利用規約
                     この利用規約（以下，「本規約」といいます。）は，佐久間昇吾（以下，「運営者」といいます。）がこのモバイルアプリケーション上で提供するサービス（以下，「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下，「ユーザー」といいます。）には，本規約に従って，本サービスをご利用いただきます。
@@ -149,27 +157,36 @@ extension TermsOfServiceView {
                     
                     以上
                     """)
+                    .padding(.horizontal, 10)
                     .foregroundColor(.black)
                     .multilineTextAlignment(.leading)
-                    .frame(width: geometry.size.width)
-            }.background(Color("White240"))
+                
+            }.frame(width: geometry.size.width)
+            .background(ColorComponents.white240)
+            
         }
     }
     
     var backButton: some View {
         Button(
+            
             action: {
+                
                 presentationMode.wrappedValue.dismiss()
+                
             }, label: {
+                
                 Text("戻る")
                     .bold()
                     .frame(width: 200, height: 40, alignment: .center)
-                    .background(Color("Primary"))
+                    .background(ColorComponents.primary)
                     .foregroundColor(.white)
                     .cornerRadius(9)
+                
             }
-        )
-        .frame(width: 200, height: 40, alignment: .center)
+            
+        ).frame(width: 200, height: 40, alignment: .center)
+        
     }
 }
 

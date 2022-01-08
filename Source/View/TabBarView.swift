@@ -27,20 +27,13 @@ struct TabBarView: View {
                             Text("List")
                         }
                     }.tag(1)
-                CreateToDoView(viewModel: CreateToDoViewModel())
-                    .tabItem {
-                        VStack {
-                            Image(systemName: "pencil")
-                            Text("ToDo")
-                        }
-                    }.tag(2)
                 SettingView(viewModel: SettingViewModel())
                     .tabItem {
                         VStack {
                             Image(systemName: "gearshape.fill")
                             Text("Setting")
                         }
-                    }.tag(3)
+                    }.tag(2)
             }.accentColor(Color("Primary"))
         }
     }

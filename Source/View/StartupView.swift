@@ -17,17 +17,22 @@ struct StartupView<T>: View where T: StartupViewModelObject {
     
     var body: some View {
         ZStack {
-            Color(.white).edgesIgnoringSafeArea(.all)
+            Color(.white).ignoresSafeArea()
             
             animationView
                 .fullScreenCover(isPresented: $viewModel.binding.isLoading,
                                  onDismiss: { viewModel.input.toLoadingStarted.send() }) {
-                if viewModel.binding.isFirebaseAuth {
-                    TabBarView()
-                } else {
-                    LoginView(viewModel: LoginViewModel(viewModel.binding.isFirebaseAuth)).edgesIgnoringSafeArea(.all)
+                    
+                    if viewModel.binding.isFirebaseLoginStatus {
+                        
+                        TabBarView()
+                        
+                    } else {
+                        
+                        LoginView(viewModel: LoginViewModel())
+                        
+                    }
                 }
-            }
         }
     }
 }
@@ -69,10 +74,7 @@ extension StartupView_Previews {
         final class Binding: StartupViewModelBindingObject {
             @Published var isAnimating: Bool = false
             @Published var isLoading: Bool = false
-            @Published var hasError: Bool = false
-            
-            @Published var isFirebaseAuth: Bool = false
-            @Published var isUserName: Bool = false
+            @Published var isFirebaseLoginStatus: Bool = false
         }
         
         final class Output: StartupViewModelOutputObject {
