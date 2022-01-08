@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A07E4D4272311190087D8C2 /* CurrentMonthDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A07E4D3272311190087D8C2 /* CurrentMonthDate.swift */; };
+		7A07E4DC272659920087D8C2 /* Oboegaki_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A07E4DB272659920087D8C2 /* Oboegaki_iOSTests.swift */; };
 		7A16455226D8F29F008CFC04 /* TermsOfServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A16455126D8F29F008CFC04 /* TermsOfServiceView.swift */; };
 		7A208C9026E6F750004F1B5B /* FirebaseRDBClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A208C8F26E6F750004F1B5B /* FirebaseRDBClientError.swift */; };
 		7A208C9226E6F775004F1B5B /* FirebaseRDBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A208C9126E6F775004F1B5B /* FirebaseRDBClient.swift */; };
@@ -31,8 +33,7 @@
 		7A3DEDD426E3A2CA00E7C0B9 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3DEDD326E3A2CA00E7C0B9 /* TabBarView.swift */; };
 		7A3DEDD826E4F82E00E7C0B9 /* CreateToDoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3DEDD726E4F82E00E7C0B9 /* CreateToDoView.swift */; };
 		7A3DEDDA26E4F86D00E7C0B9 /* CreateToDoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3DEDD926E4F86D00E7C0B9 /* CreateToDoViewModel.swift */; };
-		7A41E86626E04B470060DD78 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A41E86526E04B470060DD78 /* CalendarView.swift */; };
-		7A51C8E627167623009C7645 /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A51C8E527167623009C7645 /* WeekView.swift */; };
+		7A57FF972728E6D000EB1F2C /* DateExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A57FF962728E6D000EB1F2C /* DateExtention.swift */; };
 		7A81F3F126ECE80E00467DA0 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 7A81F3F026ECE80E00467DA0 /* FirebaseAnalytics */; };
 		7A81F3F326ECE80E00467DA0 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 7A81F3F226ECE80E00467DA0 /* FirebaseCrashlytics */; };
 		7A81F3F526ECE80E00467DA0 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 7A81F3F426ECE80E00467DA0 /* FirebaseAuth */; };
@@ -42,9 +43,24 @@
 		7A81F3FE26EF412E00467DA0 /* FirebaseAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A81F3FD26EF412E00467DA0 /* FirebaseAuthClient.swift */; };
 		7A81F40026EF413E00467DA0 /* FirebaseAuthClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A81F3FF26EF413E00467DA0 /* FirebaseAuthClientError.swift */; };
 		7A81F40226EF46B600467DA0 /* UserDefaultsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A81F40126EF46B600467DA0 /* UserDefaultsClient.swift */; };
+		7AD093072732DD63004192DD /* ColorComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AD093062732DD63004192DD /* ColorComponents.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		7A07E4DE272659920087D8C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A25FFCA26D3D7E5009837AA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A25FFD126D3D7E5009837AA;
+			remoteInfo = "Oboegaki-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		7A07E4D3272311190087D8C2 /* CurrentMonthDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentMonthDate.swift; sourceTree = "<group>"; };
+		7A07E4D9272659920087D8C2 /* Oboegaki-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Oboegaki-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A07E4DB272659920087D8C2 /* Oboegaki_iOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oboegaki_iOSTests.swift; sourceTree = "<group>"; };
+		7A07E4DD272659920087D8C2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7A16455126D8F29F008CFC04 /* TermsOfServiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsOfServiceView.swift; sourceTree = "<group>"; };
 		7A208C8F26E6F750004F1B5B /* FirebaseRDBClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseRDBClientError.swift; sourceTree = "<group>"; };
 		7A208C9126E6F775004F1B5B /* FirebaseRDBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseRDBClient.swift; sourceTree = "<group>"; };
@@ -72,14 +88,21 @@
 		7A3DEDD326E3A2CA00E7C0B9 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		7A3DEDD726E4F82E00E7C0B9 /* CreateToDoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateToDoView.swift; sourceTree = "<group>"; };
 		7A3DEDD926E4F86D00E7C0B9 /* CreateToDoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateToDoViewModel.swift; sourceTree = "<group>"; };
-		7A41E86526E04B470060DD78 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
-		7A51C8E527167623009C7645 /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
+		7A57FF962728E6D000EB1F2C /* DateExtention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtention.swift; sourceTree = "<group>"; };
 		7A81F3FD26EF412E00467DA0 /* FirebaseAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthClient.swift; sourceTree = "<group>"; };
 		7A81F3FF26EF413E00467DA0 /* FirebaseAuthClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthClientError.swift; sourceTree = "<group>"; };
 		7A81F40126EF46B600467DA0 /* UserDefaultsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsClient.swift; sourceTree = "<group>"; };
+		7AD093062732DD63004192DD /* ColorComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorComponents.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7A07E4D6272659920087D8C2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A25FFCF26D3D7E5009837AA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -96,13 +119,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7A07E4D2272310630087D8C2 /* ReusableView */ = {
+			isa = PBXGroup;
+			children = (
+				7A25FFF426D3E5E7009837AA /* LoadingView.swift */,
+				7A3DEDBF26E2FFD900E7C0B9 /* PrivacyPolicyView.swift */,
+				7A16455126D8F29F008CFC04 /* TermsOfServiceView.swift */,
+			);
+			path = ReusableView;
+			sourceTree = "<group>";
+		};
+		7A07E4DA272659920087D8C2 /* Oboegaki-iOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				7A07E4DB272659920087D8C2 /* Oboegaki_iOSTests.swift */,
+				7A07E4DD272659920087D8C2 /* Info.plist */,
+			);
+			path = "Oboegaki-iOSTests";
+			sourceTree = "<group>";
+		};
 		7A16455326D8F3A5008CFC04 /* Representable */ = {
 			isa = PBXGroup;
 			children = (
 				7A25FFFE26D3E622009837AA /* SingInWithAppleButton.swift */,
 				7A25000026D3E62E009837AA /* SignInWithGoogleButton.swift */,
-				7A41E86526E04B470060DD78 /* CalendarView.swift */,
-				7A51C8E527167623009C7645 /* WeekView.swift */,
 			);
 			path = Representable;
 			sourceTree = "<group>";
@@ -112,6 +152,7 @@
 			children = (
 				7A25001026D3F193009837AA /* Oboegaki-iOS.entitlements */,
 				7A25FFD426D3D7E5009837AA /* Source */,
+				7A07E4DA272659920087D8C2 /* Oboegaki-iOSTests */,
 				7A25FFD326D3D7E5009837AA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -120,6 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				7A25FFD226D3D7E5009837AA /* Oboegaki-iOS.app */,
+				7A07E4D9272659920087D8C2 /* Oboegaki-iOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,6 +175,7 @@
 				7A25FFE626D3DEF4009837AA /* Extension */,
 				7A16455326D8F3A5008CFC04 /* Representable */,
 				7A25FFE726D3DF00009837AA /* Components */,
+				7A07E4D2272310630087D8C2 /* ReusableView */,
 				7A25FFE826D3DF09009837AA /* Model */,
 				7A25FFE926D3DF12009837AA /* View */,
 				7A25FFEA26D3DF19009837AA /* ViewModel */,
@@ -171,6 +214,7 @@
 		7A25FFE626D3DEF4009837AA /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				7A57FF962728E6D000EB1F2C /* DateExtention.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -178,8 +222,8 @@
 		7A25FFE726D3DF00009837AA /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				7A16455126D8F29F008CFC04 /* TermsOfServiceView.swift */,
-				7A3DEDBF26E2FFD900E7C0B9 /* PrivacyPolicyView.swift */,
+				7A07E4D3272311190087D8C2 /* CurrentMonthDate.swift */,
+				7AD093062732DD63004192DD /* ColorComponents.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -195,13 +239,12 @@
 		7A25FFE926D3DF12009837AA /* View */ = {
 			isa = PBXGroup;
 			children = (
-				7A25FFD726D3D7E5009837AA /* StartupView.swift */,
 				7A25FFEE26D3E5A5009837AA /* LoginView.swift */,
+				7A25FFD726D3D7E5009837AA /* StartupView.swift */,
 				7A25FFF226D3E5D7009837AA /* HomeView.swift */,
 				7A3DEDD726E4F82E00E7C0B9 /* CreateToDoView.swift */,
 				7A3DEDCF26E32BE300E7C0B9 /* SettingView.swift */,
 				7A3DEDD326E3A2CA00E7C0B9 /* TabBarView.swift */,
-				7A25FFF426D3E5E7009837AA /* LoadingView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -257,6 +300,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		7A07E4D8272659920087D8C2 /* Oboegaki-iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A07E4E0272659920087D8C2 /* Build configuration list for PBXNativeTarget "Oboegaki-iOSTests" */;
+			buildPhases = (
+				7A07E4D5272659920087D8C2 /* Sources */,
+				7A07E4D6272659920087D8C2 /* Frameworks */,
+				7A07E4D7272659920087D8C2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7A07E4DF272659920087D8C2 /* PBXTargetDependency */,
+			);
+			name = "Oboegaki-iOSTests";
+			productName = "Oboegaki-iOSTests";
+			productReference = 7A07E4D9272659920087D8C2 /* Oboegaki-iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		7A25FFD126D3D7E5009837AA /* Oboegaki-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7A25FFE126D3D7E6009837AA /* Build configuration list for PBXNativeTarget "Oboegaki-iOS" */;
@@ -291,6 +352,10 @@
 				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1250;
 				TargetAttributes = {
+					7A07E4D8272659920087D8C2 = {
+						CreatedOnToolsVersion = 12.5.1;
+						TestTargetID = 7A25FFD126D3D7E5009837AA;
+					};
 					7A25FFD126D3D7E5009837AA = {
 						CreatedOnToolsVersion = 12.5;
 					};
@@ -315,11 +380,19 @@
 			projectRoot = "";
 			targets = (
 				7A25FFD126D3D7E5009837AA /* Oboegaki-iOS */,
+				7A07E4D8272659920087D8C2 /* Oboegaki-iOSTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		7A07E4D7272659920087D8C2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A25FFD026D3D7E5009837AA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -333,6 +406,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7A07E4D5272659920087D8C2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7A07E4DC272659920087D8C2 /* Oboegaki_iOSTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A25FFCE26D3D7E5009837AA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -345,18 +426,19 @@
 				7A25FFFD26D3E60F009837AA /* HomeViewModel.swift in Sources */,
 				7A25FFF726D3E5F3009837AA /* StartupViewModel.swift in Sources */,
 				7A81F40026EF413E00467DA0 /* FirebaseAuthClientError.swift in Sources */,
+				7A07E4D4272311190087D8C2 /* CurrentMonthDate.swift in Sources */,
 				7A3DEDC026E2FFD900E7C0B9 /* PrivacyPolicyView.swift in Sources */,
+				7A57FF972728E6D000EB1F2C /* DateExtention.swift in Sources */,
 				7A25FFED26D3E538009837AA /* ViewModelObject.swift in Sources */,
 				7A25FFFF26D3E622009837AA /* SingInWithAppleButton.swift in Sources */,
 				7A25FFF926D3E5FC009837AA /* LoginViewModel.swift in Sources */,
 				7A3DEDD026E32BE300E7C0B9 /* SettingView.swift in Sources */,
 				7A25000126D3E62E009837AA /* SignInWithGoogleButton.swift in Sources */,
-				7A41E86626E04B470060DD78 /* CalendarView.swift in Sources */,
 				7A3DEDD826E4F82E00E7C0B9 /* CreateToDoView.swift in Sources */,
-				7A51C8E627167623009C7645 /* WeekView.swift in Sources */,
 				7A25FFD826D3D7E5009837AA /* StartupView.swift in Sources */,
 				7A25FFF326D3E5D7009837AA /* HomeView.swift in Sources */,
 				7A3DEDD226E32BF000E7C0B9 /* SettingViewModel.swift in Sources */,
+				7AD093072732DD63004192DD /* ColorComponents.swift in Sources */,
 				7A208C9026E6F750004F1B5B /* FirebaseRDBClientError.swift in Sources */,
 				7A25FFD626D3D7E5009837AA /* Oboegaki_iOSApp.swift in Sources */,
 				7A25FFF526D3E5E7009837AA /* LoadingView.swift in Sources */,
@@ -368,7 +450,55 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		7A07E4DF272659920087D8C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A25FFD126D3D7E5009837AA /* Oboegaki-iOS */;
+			targetProxy = 7A07E4DE272659920087D8C2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		7A07E4E1272659920087D8C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 25PNL545V9;
+				INFOPLIST_FILE = "Oboegaki-iOSTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "s.shogo.dev-gmail.com.Oboegaki-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Oboegaki-iOS.app/Oboegaki-iOS";
+			};
+			name = Debug;
+		};
+		7A07E4E2272659920087D8C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 25PNL545V9;
+				INFOPLIST_FILE = "Oboegaki-iOSTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "s.shogo.dev-gmail.com.Oboegaki-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Oboegaki-iOS.app/Oboegaki-iOS";
+			};
+			name = Release;
+		};
 		7A25FFDF26D3D7E6009837AA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -420,7 +550,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -475,7 +605,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -534,6 +664,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7A07E4E0272659920087D8C2 /* Build configuration list for PBXNativeTarget "Oboegaki-iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A07E4E1272659920087D8C2 /* Debug */,
+				7A07E4E2272659920087D8C2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7A25FFCD26D3D7E5009837AA /* Build configuration list for PBXProject "Oboegaki-iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

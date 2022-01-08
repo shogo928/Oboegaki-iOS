@@ -25,7 +25,7 @@ protocol StartupViewModelInputObject: InputObject {
 protocol StartupViewModelBindingObject: BindingObject {
     var isAnimating: Bool { get set }
     var isLoading: Bool { get set }
-    var isFirebaseAuth: Bool { get set }
+    var isFirebaseLoginStatus: Bool { get set }
 }
 
 // MARK: - StartupViewModelOutputObject
@@ -41,7 +41,7 @@ class StartupViewModel: StartupViewModelObject {
     final class Binding: StartupViewModelBindingObject {
         @Published var isAnimating: Bool = false
         @Published var isLoading: Bool = false
-        @Published var isFirebaseAuth: Bool = false
+        @Published var isFirebaseLoginStatus: Bool = false
     }
     
     final class Output: StartupViewModelOutputObject {}
@@ -53,7 +53,6 @@ class StartupViewModel: StartupViewModelObject {
     var output: Output
     
     private var ref: DatabaseReference!
-    
     
     private var cancellables: [AnyCancellable] = []
     
@@ -70,19 +69,45 @@ class StartupViewModel: StartupViewModelObject {
         input.toLoadingStarted
             .sink(receiveValue: { [weak self] in
                 self?.checkLogin()
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    self?.binding.isLoading.toggle()
-                }
             })
             .store(in: &cancellables)
     }
     
     private func checkLogin() {
-        if Auth.auth().currentUser != nil {
-            self.binding.isFirebaseAuth = true
-        } else {
-            self.binding.isFirebaseAuth = false
-        }
+            if let user = Auth.auth().currentUser {
+                
+                if !user.uid.isEmpty {
+                    
+                    ref.child("user_info/users").observeSingleEvent(of: .value, with: { snapshot in
+
+                        if snapshot.hasChild(user.uid) {
+                            
+                            self.binding.isFirebaseLoginStatus = true
+                        
+                        } else {
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                
+                                self.binding.isFirebaseLoginStatus = false
+                                self.binding.isLoading.toggle()
+                                
+                            }
+                            
+                        }
+                        
+                    })
+                    
+                } else {
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        
+                        self.binding.isFirebaseLoginStatus = false
+                        self.binding.isLoading.toggle()
+                        
+                    }
+                    
+                }
+                
+            }
     }
 }
